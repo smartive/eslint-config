@@ -4,12 +4,6 @@ module.exports = {
     'react/prop-types': 0,
     'react/display-name': 0,
     'react/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
-    'prettier/prettier': [
-      'error',
-      {
-        endOfLine: 'auto',
-      },
-    ],
   },
   parserOptions: {
     ecmaFeatures: {
