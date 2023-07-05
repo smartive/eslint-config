@@ -46,6 +46,6 @@
   },
   "devDependencies": {
     "@smartive/prettier-config": "^3.0.0",
-    "prettier": "^2.5.1"
+    "prettier": "^3.0.0"
   }
 }
