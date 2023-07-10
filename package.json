@@ -19,19 +19,6 @@
     "url": "https://github.com/smartive/eslint-config/issues"
   },
   "homepage": "https://github.com/smartive/eslint-config#readme",
-  "release": {
-    "branches": [
-      "main"
-    ],
-    "repositoryUrl": "https://github.com/smartive/eslint-config.git",
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
-  },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
