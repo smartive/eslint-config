@@ -20,16 +20,16 @@
   },
   "homepage": "https://github.com/smartive/eslint-config#readme",
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.4.0 || ^6.7.4",
-    "@typescript-eslint/parser": "^5.4.0 || ^6.7.4",
-    "eslint-config-prettier": "^8.3.0 || ^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": ">=4.0.0 <6",
     "eslint-plugin-react": "^7.27.0",
     "eslint-plugin-react-hooks": "^4.3.0"
   },
   "peerDependencies": {
-    "eslint": "^7.0.0 || ^8.0.0"
+    "eslint": "^8.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.8.0",
@@ -37,7 +37,7 @@
     "@smartive/prettier-config": "^3.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.3",
-    "prettier": ">=2.0.0 <4"
+    "prettier": "^3.0.0"
   },
   "scripts": {
     "commitlint": "commitlint --edit",
