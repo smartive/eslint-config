@@ -1,8 +1,8 @@
 module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 0,
-    'react/display-name': 0,
+    'react/prop-types': 'off',
+    'react/display-name': 'off',
     'react/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
   },
   parserOptions: {

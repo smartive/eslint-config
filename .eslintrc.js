@@ -3,6 +3,14 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-var-requires': 'warn',
+    '@typescript-eslint/no-unused-vars': ['error'],
+    '@typescript-eslint/no-floating-promises': ['error'],
+    'no-constant-binary-expression': 'error',
+    'array-callback-return': 'error',
+    'no-debugger': 'error',
+    'no-alert': 'error',
+    'no-console': ['error', { allow: ['info', 'warn', 'error', 'trace', 'time', 'timeEnd'] }],
+    'newline-before-return': 'error',
     'prettier/prettier': [
       'error',
       {
