@@ -32,12 +32,16 @@
     "eslint": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.8.0",
+    "@commitlint/config-conventional": "^17.8.0",
     "@smartive/prettier-config": "^3.0.0",
     "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
     "prettier": ">=2.0.0 <4"
   },
   "scripts": {
-    "commit": "cz"
+    "commitlint": "commitlint --edit",
+    "prepare": "husky install"
   },
   "config": {
     "commitizen": {
