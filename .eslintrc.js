@@ -1,3 +1,4 @@
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -26,6 +27,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
+    project: true,
   },
   extends: [
     'eslint:recommended',
