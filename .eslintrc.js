@@ -1,17 +1,26 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   rules: {
+    '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+    '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-var-requires': 'warn',
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-floating-promises': ['error'],
+    '@typescript-eslint/no-explicit-any': ['error', { fixToUnknown: true }],
     'no-constant-binary-expression': 'error',
     'array-callback-return': 'error',
     'no-debugger': 'error',
     'no-alert': 'error',
     'no-console': ['error', { allow: ['info', 'warn', 'error', 'trace', 'time', 'timeEnd'] }],
     'newline-before-return': 'error',
+    'prefer-const': 'error',
+    'no-else-return': 'error',
+    'no-extra-semi': 'error',
+    curly: 'error',
+    eqeqeq: 'error',
+    'default-case-last': 'error',
     'prettier/prettier': [
       'error',
       {
@@ -35,11 +44,13 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier'],
 };
