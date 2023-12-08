@@ -32,6 +32,8 @@ Create a `.eslintrc` file in the root of your project's directory (it should liv
 }
 ```
 
+### NPM scripts
+
 To use eslint add the following to your package.json:
 
 ```json
@@ -40,3 +42,7 @@ To use eslint add the following to your package.json:
   "lint:fix": "eslint . --fix"
 }
 ```
+
+### TypeScript configuration
+
+Since there are some rules which require type information please make sure to set up a `tsconfig.json` configuration file in the root directory of your project. If your TypeScript configuration file is placed in another location you have to configure it using `parserOptions.project` in your ESLint configuration file. For more information have a look at the [typescript-eslint documentation](https://typescript-eslint.io/packages/parser/#project).
