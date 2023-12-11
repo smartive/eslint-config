@@ -5,6 +5,14 @@ module.exports = {
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
   },
   parserOptions: {
     ecmaFeatures: {
