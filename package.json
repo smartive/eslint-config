@@ -32,8 +32,8 @@
     "eslint": "^8.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^18.0.0",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@smartive/prettier-config": "^3.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^9.0.0",
