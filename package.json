@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/smartive/eslint-config#readme",
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": ">=4.0.0 <6",
