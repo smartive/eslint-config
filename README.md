@@ -10,24 +10,28 @@ $ npm install eslint @smartive/eslint-config -D
 
 ## Usage
 
-Create a `.eslintrc` file in the root of your project's directory (it should live where `package.json` does). This package offers two different rulesets, on for plain TypeScript applications (`@smartive/eslint-config`) and a separate one for React applications (`@smartive/eslint-config`). Your `.eslintrc` file should look like this:
+This package offers two different rule sets, one for plain TypeScript applications and a separate one for React applications.
 
-### Plain TypeScript applications
+### Flat Config (`eslint.config.mjs`)
 
+```javascript
+import { configs } from '@smartive/eslint-config'
+
+// For plain TS applications ..
+export default configs.typescript;
+
+// .. or React applications
+export default configs.react;
 ```
+
+### Legacy Config (`.eslintrc`)
+
+```json
 {
   "extends": [
-    "@smartive/eslint-config"
-  ]
-}
-```
-
-### React applications
-
-```
-{
-  "extends": [
-    "@smartive/eslint-config/react"
+    "@smartive/eslint-config/typescript-legacy" // Plain TS applications
+    // or
+    "@smartive/eslint-config/react-legacy"      // React applications
   ]
 }
 ```
@@ -42,7 +46,3 @@ To use eslint add the following to your package.json:
   "lint:fix": "eslint . --fix"
 }
 ```
-
-### TypeScript configuration
-
-Since there are some rules which require type information please make sure to set up a `tsconfig.json` configuration file in the root directory of your project. If your TypeScript configuration file is placed in another location you have to configure it using `parserOptions.project` in your ESLint configuration file. For more information have a look at the [typescript-eslint documentation](https://typescript-eslint.io/packages/parser/#project).
