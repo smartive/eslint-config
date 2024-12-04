@@ -13,7 +13,7 @@ module.exports = {
     'array-callback-return': 'error',
     'no-debugger': 'error',
     'no-alert': 'error',
-    'no-console': ['error', { allow: ['info', 'warn', 'error', 'trace', 'time', 'timeEnd'] }],
+    'no-console': ['error', { allow: ['debug', 'info', 'warn', 'error', 'trace', 'time', 'timeEnd'] }],
     'newline-before-return': 'error',
     'prefer-const': 'error',
     'no-else-return': 'error',
