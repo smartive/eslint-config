@@ -27,6 +27,7 @@ const rules = (react: boolean): Linter.RulesRecord => ({
   '@typescript-eslint/consistent-type-definitions': 'off',
   '@typescript-eslint/explicit-function-return-type': 'off',
   '@typescript-eslint/explicit-module-boundary-types': 'off',
+  '@typescript-eslint/prefer-regexp-exec': 'off',
   '@typescript-eslint/no-var-requires': 'warn',
   '@typescript-eslint/no-unused-vars': ['error'],
   '@typescript-eslint/no-floating-promises': ['error'],
