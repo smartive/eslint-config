@@ -6,6 +6,8 @@ import reactPlugin from 'eslint-plugin-react';
 import globals from 'globals';
 import tsEslint from 'typescript-eslint';
 
+const JS_FILES = ['**/*.js', '**/*.mjs'];
+
 const reactRules: Linter.RulesRecord = {
   'react/prop-types': 'off',
   'react/display-name': 'off',
@@ -50,36 +52,6 @@ const rules = (react: boolean): Linter.RulesRecord => ({
   ...(react ? reactRules : {}),
 });
 
-export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({
-  rules: rules(react),
-  env: {
-    es2020: true,
-    browser: true,
-    node: true,
-  },
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    projectService: true,
-  },
-  extends: [
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:import/typescript',
-    'plugin:@typescript-eslint/recommended-type-checked',
-    'plugin:@typescript-eslint/stylistic-type-checked',
-    ...(react ? ['plugin:react/recommended', 'plugin:react/jsx-runtime'] : []),
-  ],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
-});
-
 const flatConfigTypescript = tsEslint.config(
   js.configs.recommended,
   eslintPluginPrettierRecommended,
@@ -88,6 +60,10 @@ const flatConfigTypescript = tsEslint.config(
   eslintPluginImportConfigs.typescript,
   tsEslint.configs.recommendedTypeChecked,
   tsEslint.configs.stylisticTypeChecked,
+  {
+    files: JS_FILES,
+    extends: [tsEslint.configs.disableTypeChecked],
+  },
   {
     rules: rules(false),
     languageOptions: {
@@ -120,3 +96,39 @@ export const configs = {
   typescript: flatConfigTypescript,
   react: flatConfigReact,
 };
+
+export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({
+  rules: rules(react),
+  env: {
+    es2020: true,
+    browser: true,
+    node: true,
+  },
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+    projectService: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
+    ...(react ? ['plugin:react/recommended', 'plugin:react/jsx-runtime'] : []),
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'prettier'],
+  overrides: [
+    {
+      files: JS_FILES,
+      extends: ['plugin:@typescript-eslint/disable-type-checked'],
+    },
+  ],
+});
