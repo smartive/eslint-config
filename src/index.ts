@@ -1,3 +1,4 @@
+import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import type { Linter } from 'eslint';
 import { flatConfigs as eslintPluginImportConfigs } from 'eslint-plugin-import';
@@ -86,16 +87,34 @@ const flatConfigTypescript = tsEslint.config(
   },
 );
 
-const flatConfigReact = tsEslint.config(
-  flatConfigTypescript,
-  reactPlugin.configs.flat!.recommended as unknown as Linter.Config,
-  reactPlugin.configs.flat!['jsx-runtime'] as unknown as Linter.Config,
-  { rules: reactRules },
-);
+// This is just a workaround until Next.js decides to provide a flat config
+// the same way the rest of the world does..
+// Nid hässig, nur entüüscht.
+const flatConfigNext = () =>
+  new FlatCompat().extends('next').map((config) => {
+    const { plugins } = config;
+    if (plugins?.import) {
+      // ugly workaround to fix an issue when reusing the import plugin
+      // see https://github.com/eslint/eslintrc/issues/135
+      plugins.import = eslintPluginImportConfigs.errors.plugins!.import;
+    }
+
+    return config;
+  });
+
+const flatConfigReact = (includeNextConfig = false) =>
+  tsEslint.config(
+    flatConfigTypescript,
+    reactPlugin.configs.flat!.recommended as unknown as Linter.Config,
+    reactPlugin.configs.flat!['jsx-runtime'] as unknown as Linter.Config,
+    ...(includeNextConfig ? flatConfigNext() : []),
+    { rules: reactRules },
+  );
 
 export const configs = {
   typescript: flatConfigTypescript,
-  react: flatConfigReact,
+  react: flatConfigReact(),
+  next: flatConfigReact(true),
 };
 
 export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({
