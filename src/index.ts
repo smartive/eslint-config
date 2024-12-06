@@ -102,19 +102,19 @@ const flatConfigNext = () =>
     return config;
   });
 
-const flatConfigReact = (includeNextConfig = false) =>
+const flatConfigReact = (includeNextJsConfig = false) =>
   tsEslint.config(
     flatConfigTypescript,
     reactPlugin.configs.flat!.recommended as unknown as Linter.Config,
     reactPlugin.configs.flat!['jsx-runtime'] as unknown as Linter.Config,
-    ...(includeNextConfig ? flatConfigNext() : []),
+    ...(includeNextJsConfig ? flatConfigNext() : []),
     { rules: reactRules },
   );
 
 export const configs = {
   typescript: flatConfigTypescript,
   react: flatConfigReact(),
-  next: flatConfigReact(true),
+  nextjs: flatConfigReact(true),
 };
 
 export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({

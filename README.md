@@ -24,7 +24,7 @@ export default configs.typescript;
 export default configs.react;
 
 // .. or Next.js applications
-export default configs.next;
+export default configs.nextjs;
 ```
 
 ### Legacy Config (`.eslintrc`)
