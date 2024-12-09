@@ -114,7 +114,6 @@ const flatConfigReact = (includeNextJsConfig = false) =>
 export const configs = {
   typescript: flatConfigTypescript,
   react: flatConfigReact(),
-  nextjs: flatConfigReact(true),
 };
 
 export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({
