@@ -111,9 +111,25 @@ const flatConfigReact = (includeNextJsConfig = false) =>
     { rules: reactRules },
   );
 
+/**
+ * @deprecated Use `config(type)` instead
+ */
 export const configs = {
   typescript: flatConfigTypescript,
   react: flatConfigReact(),
+};
+
+export const config = (type: string) => {
+  switch (type) {
+    case 'typescript':
+      return flatConfigTypescript;
+    case 'react':
+      return flatConfigReact();
+    case 'nextjs':
+      return flatConfigReact(true);
+    default:
+      throw new Error(`Unknown config type: ${type}`);
+  }
 };
 
 export const generateLegacyConfig = (react: boolean): Linter.LegacyConfig => ({

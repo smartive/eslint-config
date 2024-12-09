@@ -15,16 +15,18 @@ This package offers two different rule sets, one for plain TypeScript applicatio
 ### Flat Config (`eslint.config.mjs`)
 
 ```javascript
-import { configs } from '@smartive/eslint-config'
+import { config } from '@smartive/eslint-config'
 
 // For plain TS applications ..
-export default configs.typescript;
+export default config('typescript');
 
 // .. or React applications
-export default configs.react;
+export default config('react');
 
 // .. or Next.js applications
-export default configs.nextjs;
+// make sure to add `eslint-config-next` 
+// to your devDependencies
+export default config('nextjs');
 ```
 
 ### Legacy Config (`.eslintrc`)
