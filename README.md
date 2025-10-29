@@ -10,7 +10,7 @@ $ npm install eslint @smartive/eslint-config -D
 
 ## Usage
 
-This package offers two different rule sets, one for plain TypeScript applications and a separate one for React applications.
+This package offers three different rule sets, one for plain TypeScript applications, a separate one for React applications and one that works well with Next.js applications (minimum supported version is Next.js v16).
 
 ### Flat Config (`eslint.config.mjs`)
 
@@ -24,21 +24,9 @@ export default config('typescript');
 export default config('react');
 
 // .. or Next.js applications
-// make sure to add `eslint-config-next` 
+// make sure to add `eslint-config-next@16` 
 // to your devDependencies
 export default config('nextjs');
-```
-
-### Legacy Config (`.eslintrc`)
-
-```json
-{
-  "extends": [
-    "@smartive/eslint-config/typescript-legacy" // Plain TS applications
-    // or
-    "@smartive/eslint-config/react-legacy"      // React applications
-  ]
-}
 ```
 
 ### NPM scripts
