@@ -63,6 +63,9 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   },
+  "engines": {
+    "node": "^20.19.0 || >=22.12"
+  },
   "scripts": {
     "tsc": "tsc",
     "build": "rm -rf dist && tsc",
