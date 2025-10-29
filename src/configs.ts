@@ -39,18 +39,20 @@ export const flatConfigTypescript = (rulesOnly = false) =>
   defineConfig([
     js.configs.recommended,
     eslintPluginPrettierRecommended,
-    rulesOnly
-      ? {
-          rules: tsEslintConfigs.reduce(
-            (combinedRules, { rules }) => ({ ...combinedRules, ...(rules ? rules : {}) }),
-            {} as Linter.RulesRecord,
-          ),
-        }
-      : {
-          ...eslintPluginImportConfigs.errors,
-          ...eslintPluginImportConfigs.warnings,
-          ...eslintPluginImportConfigs.typescript,
-          ...{
+    ...(rulesOnly
+      ? [
+          {
+            rules: tsEslintConfigs.reduce(
+              (combinedRules, { rules }) => ({ ...combinedRules, ...(rules ? rules : {}) }),
+              {} as Linter.RulesRecord,
+            ),
+          },
+        ]
+      : [
+          eslintPluginImportConfigs.errors,
+          eslintPluginImportConfigs.warnings,
+          eslintPluginImportConfigs.typescript,
+          {
             settings: {
               'import/resolver': {
                 node: true,
@@ -60,8 +62,9 @@ export const flatConfigTypescript = (rulesOnly = false) =>
               },
             },
           },
-          ...tsEslintConfigs,
-        },
+          ...tsEslint.configs.recommendedTypeChecked,
+          ...tsEslint.configs.stylisticTypeChecked,
+        ]),
     {
       files: ['**/*.js', '**/*.mjs'],
       extends: [tsEslint.configs.disableTypeChecked],
