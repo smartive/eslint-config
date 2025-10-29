@@ -72,16 +72,18 @@ export const flatConfigTypescript = (rulesOnly = false) =>
     baseConfig,
   ]);
 
-export const flatConfigReact = defineConfig([
-  ...flatConfigTypescript(),
-  reactPlugin.configs.flat.recommended,
-  reactPlugin.configs.flat['jsx-runtime'],
-  reactHooks.configs.flat.recommended,
-  reactConfig,
-]);
+export const flatConfigReact = () =>
+  defineConfig([
+    ...flatConfigTypescript(),
+    reactPlugin.configs.flat.recommended,
+    reactPlugin.configs.flat['jsx-runtime'],
+    reactHooks.configs.flat.recommended,
+    reactConfig,
+  ]);
 
-export const flatConfigNext = defineConfig([
-  ...createRequire(import.meta.url)('eslint-config-next/core-web-vitals'),
-  ...flatConfigTypescript(true),
-  reactConfig,
-]);
+export const flatConfigNext = () =>
+  defineConfig([
+    ...createRequire(import.meta.url)('eslint-config-next/core-web-vitals'),
+    ...flatConfigTypescript(true),
+    reactConfig,
+  ]);

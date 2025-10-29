@@ -6,9 +6,9 @@ export const config = (type: 'typescript' | 'react' | 'nextjs'): Linter.Config[]
     case 'typescript':
       return flatConfigTypescript();
     case 'react':
-      return flatConfigReact;
+      return flatConfigReact();
     case 'nextjs':
-      return flatConfigNext;
+      return flatConfigNext();
     default:
       throw new Error(`Unknown config type: ${type}`);
   }
