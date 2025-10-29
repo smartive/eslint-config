@@ -7,12 +7,9 @@
     "LICENSE",
     "dist"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smartive/eslint-config.git"
@@ -41,7 +38,6 @@
     "globals": "^16.0.0",
     "typescript-eslint": "^8.15.0"
   },
-  "type": "module",
   "peerDependencies": {
     "eslint": "^9.22.0",
     "next": "^16.0.0",
