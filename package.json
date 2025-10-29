@@ -40,8 +40,8 @@
   },
   "peerDependencies": {
     "eslint": "^9.22.0",
-    "next": "^16.0.0",
-    "eslint-config-next": "^16.0.0"
+    "eslint-config-next": "^16.0.0",
+    "next": "^16.0.0"
   },
   "peerDependenciesMeta": {
     "next": {
@@ -56,7 +56,7 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.15.0",
     "@smartive/prettier-config": "^3.0.0",
-    "@types/node": "^22.9.1",
+    "@types/node": "24.9.2",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.22.0",
     "husky": "^9.1.7",
