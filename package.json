@@ -58,7 +58,7 @@
     "@smartive/prettier-config": "^3.0.0",
     "@types/node": "24.9.2",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.39.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
