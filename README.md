@@ -35,7 +35,7 @@ To use eslint add the following to your package.json:
 
 ```json
 "scripts": {
-  "lint": "eslint .",
-  "lint:fix": "eslint . --fix"
+  "lint": "eslint {your source directory}",
+  "lint:fix": "eslint {your source directory} --fix"
 }
 ```
