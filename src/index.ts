@@ -1,7 +1,7 @@
-import type { Config } from '@eslint/config-helpers';
+import type { Linter } from 'eslint';
 import { flatConfigNext, flatConfigReact, flatConfigTypescript } from './configs.js';
 
-export const config = (type: 'typescript' | 'react' | 'nextjs'): Config[] => {
+export const config = (type: 'typescript' | 'react' | 'nextjs'): Linter.Config[] => {
   switch (type) {
     case 'typescript':
       return flatConfigTypescript();
