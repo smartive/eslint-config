@@ -17,8 +17,5 @@ node_modules/
 # next.js build output
 .next
 
-# NPM lock file
-package-lock.json
-
 # Distribution directory
 dist
