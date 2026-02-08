@@ -1,6 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>smartive/renovate-config", ":automergeDisabled", ":preserveSemverRanges"
-  ]
+  "extends": ["local>smartive/renovate-config", ":automergeDisabled", ":preserveSemverRanges"]
 }

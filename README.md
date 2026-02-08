@@ -24,7 +24,7 @@ export default config('typescript');
 export default config('react');
 
 // .. or Next.js applications
-// make sure to add `eslint-config-next@16` 
+// make sure to add `eslint-config-next@16`
 // to your devDependencies
 export default config('nextjs');
 ```
