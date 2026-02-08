@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "typeRoots": ["./src/typings","node_modules/@types"],
+    "typeRoots": ["./src/typings", "node_modules/@types"],
     "declaration": true,
     "outDir": "./dist",
     "esModuleInterop": true,

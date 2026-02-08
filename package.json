@@ -68,6 +68,8 @@
   },
   "scripts": {
     "tsc": "tsc",
+    "prettier": "prettier --check .",
+    "check-types": "tsc --noEmit",
     "build": "rm -rf dist && tsc",
     "commitlint": "commitlint --edit",
     "prepare": "[ ! -f node_modules/.bin/husky ] || husky"
