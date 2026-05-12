@@ -11,10 +11,11 @@ import tsEslint from 'typescript-eslint';
 import { defaultRules, prettierRules, reactRules, typescriptRules } from './rules.js';
 
 const tsEslintConfigs = [...tsEslint.configs.recommendedTypeChecked, ...tsEslint.configs.stylisticTypeChecked];
+const TS_FILES = ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'];
 
 const baseConfig: Linter.Config = {
   name: '@smartive/eslint-config/base',
-  rules: { ...defaultRules, ...typescriptRules, ...prettierRules },
+  rules: { ...defaultRules, ...prettierRules },
   languageOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
@@ -33,7 +34,13 @@ const baseConfig: Linter.Config = {
   },
 };
 
-const reactConfig: Linter.Config = { name: '@smartive/eslint-config/react', rules: reactRules };
+const tsBaseConfig: Linter.Config = {
+  name: '@smartive/eslint-config/ts-base',
+  files: TS_FILES,
+  rules: typescriptRules,
+};
+
+const reactConfig: Linter.Config = { name: '@smartive/eslint-config/react', files: TS_FILES, rules: reactRules };
 
 export const flatConfigTypescript = (rulesOnly = false) =>
   defineConfig([
@@ -42,6 +49,8 @@ export const flatConfigTypescript = (rulesOnly = false) =>
     ...(rulesOnly
       ? [
           {
+            name: '@smartive/eslint-config/ts-rules-only',
+            files: TS_FILES,
             rules: tsEslintConfigs.reduce(
               (combinedRules, { rules }) => ({ ...combinedRules, ...(rules ? rules : {}) }),
               {} as Linter.RulesRecord,
@@ -70,6 +79,7 @@ export const flatConfigTypescript = (rulesOnly = false) =>
       extends: [tsEslint.configs.disableTypeChecked],
     },
     baseConfig,
+    tsBaseConfig,
   ]);
 
 export const flatConfigReact = () =>
@@ -84,6 +94,10 @@ export const flatConfigReact = () =>
 export const flatConfigNext = () =>
   defineConfig([
     ...createRequire(import.meta.url)('eslint-config-next/core-web-vitals'),
+    {
+      name: '@smartive/eslint-config/next-ts-plugin',
+      plugins: { '@typescript-eslint': tsEslint.plugin },
+    },
     ...flatConfigTypescript(true),
     reactConfig,
   ]);
