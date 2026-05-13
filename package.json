@@ -52,8 +52,8 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "20.5.3",
-    "@commitlint/config-conventional": "20.5.3",
+    "@commitlint/cli": "21.0.0",
+    "@commitlint/config-conventional": "21.0.0",
     "@eslint/js": "9.39.4",
     "@smartive/prettier-config": "3.1.2",
     "@types/node": "24.12.3",
