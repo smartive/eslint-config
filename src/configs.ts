@@ -1,3 +1,4 @@
+import { fixupConfigRules } from '@eslint/compat';
 import js from '@eslint/js';
 import type { Linter } from 'eslint';
 import { flatConfigs as eslintPluginImportConfigs } from 'eslint-plugin-import';
@@ -49,9 +50,9 @@ export const flatConfigTypescript = (rulesOnly = false) =>
           },
         ]
       : [
-          eslintPluginImportConfigs.errors,
-          eslintPluginImportConfigs.warnings,
-          eslintPluginImportConfigs.typescript,
+          fixupConfigRules(eslintPluginImportConfigs.errors),
+          fixupConfigRules(eslintPluginImportConfigs.warnings),
+          fixupConfigRules(eslintPluginImportConfigs.typescript),
           {
             settings: {
               'import/resolver': {
@@ -75,8 +76,8 @@ export const flatConfigTypescript = (rulesOnly = false) =>
 export const flatConfigReact = () =>
   defineConfig([
     ...flatConfigTypescript(),
-    reactPlugin.configs.flat.recommended,
-    reactPlugin.configs.flat['jsx-runtime'],
+    fixupConfigRules(reactPlugin.configs.flat.recommended),
+    fixupConfigRules(reactPlugin.configs.flat['jsx-runtime']),
     reactHooks.configs.flat.recommended,
     reactConfig,
   ]);
