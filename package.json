@@ -54,11 +54,11 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.1",
     "@commitlint/config-conventional": "21.2.0",
-    "@eslint/js": "9.39.4",
+    "@eslint/js": "9.39.5",
     "@smartive/prettier-config": "3.1.2",
     "@types/node": "25.9.5",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "9.39.4",
+    "eslint": "9.39.5",
     "husky": "9.1.7",
     "prettier": "3.9.5",
     "typescript": "6.0.3"
