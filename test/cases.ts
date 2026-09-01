@@ -32,6 +32,12 @@ export const runSharedCases = (type: ConfigType): void => {
   expectProblemOn(type, 'typescript-rules.ts', 1, 'flags explicit any');
   expectProblemOn(type, 'floating-promise.ts', 6, 'flags a floating promise');
   expectProblemOn(type, 'prettier.ts', 2, 'flags a prettier violation');
+
+  // plain JavaScript has to work too: a rule set that only registers its plugins for .ts/.tsx
+  // throws "Could not find plugin" the moment a .js file is linted
+  expectClean(type, 'clean.mjs', 'reports nothing for a clean .mjs file');
+  expectProblemOn(type, 'plain.js', 2, 'flags console.log in a .js file');
+  expectProblemOn(type, 'plain.js', 4, 'flags loose equality in a .js file');
 };
 
 /** Import resolution, which only the `typescript` and `react` rule sets enable. */
