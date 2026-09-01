@@ -1,5 +1,5 @@
 import { describe } from 'node:test';
-import { runReactCases, runSharedCases } from './cases.ts';
+import { runNextOnlyCases, runReactCases, runSharedCases } from './cases.ts';
 
 /**
  * The Next.js rule set layers `eslint-config-next` on top, so it must still provide everything the plain
@@ -9,4 +9,5 @@ import { runReactCases, runSharedCases } from './cases.ts';
 describe('config("nextjs")', () => {
   runSharedCases('nextjs');
   runReactCases('nextjs');
+  runNextOnlyCases('nextjs');
 });

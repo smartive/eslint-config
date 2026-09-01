@@ -46,6 +46,18 @@ export const runImportCases = (type: ConfigType): void => {
   expectProblemOn(type, 'unresolved-import.ts', 1, 'flags an unresolvable import');
 };
 
+/**
+ * Rules that only the `nextjs` rule set provides, because they come from `eslint-config-next`.
+ *
+ * Asserted by line, not by rule id, so they keep holding if the plugin behind them is swapped — the
+ * accessibility rules come from `eslint-plugin-jsx-a11y` and `@next/eslint-plugin-next`, the import
+ * rule from `eslint-plugin-import`, and any of those may be replaced.
+ */
+export const runNextOnlyCases = (type: ConfigType): void => {
+  expectProblemOn(type, 'next-plugins.tsx', 4, 'flags an <img> without an alt attribute');
+  expectProblemOn(type, 'next-plugins.tsx', 7, 'flags an anonymous default export');
+};
+
 /** React/JSX behaviour shared by the `react` and `nextjs` rule sets. */
 export const runReactCases = (type: ConfigType): void => {
   expectClean(type, 'clean-component.tsx', 'reports nothing for a clean component');
