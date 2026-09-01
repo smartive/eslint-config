@@ -57,10 +57,16 @@
     "@eslint/js": "9.39.5",
     "@smartive/prettier-config": "3.1.2",
     "@types/node": "25.9.5",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "9.39.5",
+    "eslint-config-next": "16.3.4",
     "husky": "9.1.7",
+    "next": "16.3.4",
     "prettier": "3.9.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "typescript": "6.0.3"
   },
   "engines": {
@@ -68,15 +74,19 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "prettier": "prettier --check .",
+    "prettier": "prettier --check . --ignore-path .prettierignore-cli",
     "check-types": "tsc --noEmit",
     "build": "rm -rf dist && tsc",
     "commitlint": "commitlint --edit",
-    "prepare": "[ ! -f node_modules/.bin/husky ] || husky"
+    "prepare": "[ ! -f node_modules/.bin/husky ] || husky",
+    "test": "npm run build && tsc --noEmit -p tsconfig.test.json && node --test \"test/**/*.test.ts\""
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }
