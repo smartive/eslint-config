@@ -39,3 +39,18 @@ To use eslint add the following to your package.json:
   "lint:fix": "eslint {your source directory} --fix"
 }
 ```
+
+## Development
+
+```sh
+$ npm run check-types  # type-check the config sources
+$ npm run prettier     # formatting
+$ npm test             # build, type-check the tests, then run them
+```
+
+The tests in `test/` lint the fixtures in `test/fixtures/` with each of the three rule sets and assert that
+a given fixture line is flagged. They deliberately never assert on rule ids, so that swapping out a plugin
+for an equivalent one does not require rewriting them.
+
+> `npm test` runs the TypeScript test files directly through Node's type stripping, which needs Node
+> 22.18 or newer.
