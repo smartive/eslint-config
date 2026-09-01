@@ -5,6 +5,8 @@
     "moduleResolution": "bundler",
     "strict": true,
     "jsx": "react-jsx",
+    // real Next.js projects set this; without it the .js fixtures are not in the project
+    "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true
   },

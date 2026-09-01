@@ -32,12 +32,30 @@ export const runSharedCases = (type: ConfigType): void => {
   expectProblemOn(type, 'typescript-rules.ts', 1, 'flags explicit any');
   expectProblemOn(type, 'floating-promise.ts', 6, 'flags a floating promise');
   expectProblemOn(type, 'prettier.ts', 2, 'flags a prettier violation');
+
+  // plain JavaScript has to work too: a rule set that only registers its plugins for .ts/.tsx
+  // throws "Could not find plugin" the moment a .js file is linted
+  expectClean(type, 'clean.mjs', 'reports nothing for a clean .mjs file');
+  expectProblemOn(type, 'plain.js', 2, 'flags console.log in a .js file');
+  expectProblemOn(type, 'plain.js', 4, 'flags loose equality in a .js file');
 };
 
 /** Import resolution, which only the `typescript` and `react` rule sets enable. */
 export const runImportCases = (type: ConfigType): void => {
   expectClean(type, 'clean-import.ts', 'resolves an extensionless relative import');
   expectProblemOn(type, 'unresolved-import.ts', 1, 'flags an unresolvable import');
+};
+
+/**
+ * Rules that only the `nextjs` rule set provides, because they come from `eslint-config-next`.
+ *
+ * Asserted by line, not by rule id, so they keep holding if the plugin behind them is swapped — the
+ * accessibility rules come from `eslint-plugin-jsx-a11y` and `@next/eslint-plugin-next`, the import
+ * rule from `eslint-plugin-import`, and any of those may be replaced.
+ */
+export const runNextOnlyCases = (type: ConfigType): void => {
+  expectProblemOn(type, 'next-plugins.tsx', 4, 'flags an <img> without an alt attribute');
+  expectProblemOn(type, 'next-plugins.tsx', 7, 'flags an anonymous default export');
 };
 
 /** React/JSX behaviour shared by the `react` and `nextjs` rule sets. */
