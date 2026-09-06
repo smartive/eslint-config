@@ -58,7 +58,7 @@
     "@smartive/prettier-config": "3.1.2",
     "@types/node": "25.9.5",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
+    "@types/react-dom": "19.2.7",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.4",
