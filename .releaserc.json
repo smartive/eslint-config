@@ -1,5 +1,6 @@
 {
   "branches": [
+    "7.0.x",
     "main",
     {
       "name": "next",
