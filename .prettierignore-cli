@@ -1,0 +1,7 @@
+# Ignore list for `npm run prettier` only.
+#
+# Deliberately NOT named `.prettierignore`: eslint-plugin-prettier reads that file as well, which would
+# make it skip `test/fixtures/prettier.ts` — the fixture whose whole purpose is to trip the
+# `prettier/prettier` rule.
+dist
+test/fixtures

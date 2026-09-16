@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    // the test files import each other with explicit `.ts` extensions, as Node's type stripping requires
+    "allowImportingTsExtensions": true
+  },
+  // fixtures are deliberately broken; they are linted, never type-checked
+  "include": ["test/**/*.ts"],
+  "exclude": ["test/fixtures"]
+}

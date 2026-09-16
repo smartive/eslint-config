@@ -5,6 +5,8 @@
     "moduleResolution": "nodenext",
     "typeRoots": ["./src/typings", "node_modules/@types"],
     "declaration": true,
+    "types": ["node"],
+    "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
