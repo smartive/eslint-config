@@ -1,3 +1,4 @@
+import type { Linter } from 'eslint';
 import assert from 'node:assert/strict';
 import { it } from 'node:test';
 import { describeMessages, lint, problemsOnLine, type ConfigType } from './helpers.ts';
@@ -12,6 +13,13 @@ const expectProblemOn = (type: ConfigType, fixture: string, line: number, what: 
     );
   });
 };
+
+/**
+ * Warnings from `smartive/forbid-component-props` on a given line. Matched on the message rather than
+ * the rule id, like every other assertion here — the rule is ours, so the wording is ours to keep.
+ */
+const forbiddenPropWarnings = (messages: Linter.LintMessage[], line: number): Linter.LintMessage[] =>
+  problemsOnLine(messages, line).filter((message) => message.message.includes('forbidden on components'));
 
 const expectClean = (type: ConfigType, fixture: string, what: string): void => {
   it(what, async () => {
@@ -76,5 +84,34 @@ export const runReactCases = (type: ConfigType): void => {
         `expected a warning about "${prop}" on line 7, got:\n${describeMessages(messages)}`,
       );
     }
+  });
+
+  it('does not flag forbidden props on intrinsic elements', async () => {
+    const messages = await lint(type, 'component-props-edge-cases.tsx');
+
+    assert.deepEqual(
+      forbiddenPropWarnings(messages, 10),
+      [],
+      `<div className style /> must stay clean — flagging it would be a false positive on every DOM element.\n${describeMessages(messages)}`,
+    );
+  });
+
+  it('flags forbidden props on member-expression components', async () => {
+    const messages = await lint(type, 'component-props-edge-cases.tsx');
+
+    assert.ok(
+      forbiddenPropWarnings(messages, 13).some((message) => message.message.includes('className')),
+      `expected a warning for <Group.Item className />, got:\n${describeMessages(messages)}`,
+    );
+  });
+
+  it('ignores spread attributes', async () => {
+    const messages = await lint(type, 'component-props-edge-cases.tsx');
+
+    assert.deepEqual(
+      forbiddenPropWarnings(messages, 16),
+      [],
+      `a spread carries no attribute name to check, got:\n${describeMessages(messages)}`,
+    );
   });
 };
