@@ -1,4 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>smartive/renovate-config:best-practices-lib"]
+  "extends": ["github>smartive/renovate-config:best-practices-lib"],
+  "packageRules": [
+    {
+      "description": "TypeScript 7 is the Go port, and it no longer exposes the JS API enums (ts.TypeFlags, ts.SyntaxKind, ts.SymbolFlags, ...) that the type-aware linting stack reads. ts-api-utils dereferences ts.TypeFlags.Intrinsic at module scope, so merely loading @typescript-eslint/type-utils throws and every rule set fails to construct. typescript-eslint caps its own peer range at <6.1.0 for this reason. Lift this once it ships TypeScript 7 support.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
+    }
+  ]
 }
