@@ -91,6 +91,44 @@ ESLint React covers most of what is turned off. What is genuinely lost:
 | `react-hooks/config`, `react-hooks/gating`, `react-hooks/incompatible-library`, `react-hooks/preserve-manual-memoization` | none — ESLint React does not implement these React Compiler rules |
 | `react/no-unescaped-entities`                                                                                             | none                                                              |
 
+## Upgrading from v7
+
+Expect new errors on code that passed before. ESLint React's `recommended-type-checked` preset is
+considerably broader than the `eslint-plugin-react` set it replaces, so upgrading turns on **44 checks
+that had no predecessor** — 14 as `error`, 30 as `warn`. These are new findings in unchanged code, not
+regressions.
+
+The 14 that fail a build:
+
+| Rule                                                  | Catches                                                       |
+| ----------------------------------------------------- | ------------------------------------------------------------- |
+| `@eslint-react/no-leaked-conditional-rendering`       | `{count && <Foo />}` rendering `0`, or crashing on a non-node |
+| `@eslint-react/no-nested-component-definitions`       | components declared inside other components                   |
+| `@eslint-react/no-nested-lazy-component-declarations` | `lazy()` called inside a component                            |
+| `@eslint-react/jsx-no-key-after-spread`               | `key` placed after `{...props}`                               |
+| `@eslint-react/jsx-no-namespace`                      | namespaced JSX names                                          |
+| `@eslint-react/jsx-no-children-prop-with-children`    | `children` passed both as prop and as JSX children            |
+| `@eslint-react/dom-no-void-elements-with-children`    | children on `<img>`, `<br>` and friends                       |
+| `@eslint-react/dom-no-flush-sync`                     | `flushSync`, which forces a synchronous re-render             |
+| `@eslint-react/dom-no-use-form-state`                 | the removed `useFormState`                                    |
+| `@eslint-react/no-access-state-in-setstate`           | reading `this.state` inside `setState`                        |
+| `@eslint-react/rsc-function-definition`               | invalid server-component function forms                       |
+| `no-unassigned-vars`                                  | declared, never assigned, still read                          |
+| `no-useless-assignment`                               | a value overwritten before it is read                         |
+| `preserve-caught-error`                               | rethrowing without passing `cause`                            |
+
+The last three are core ESLint rules, new to `js.configs.recommended` in `@eslint/js` v10.
+
+The 30 warnings cluster into a few families: effect-cleanup leaks
+(`@eslint-react/web-api-no-leaked-timeout`, `-interval`, `-event-listener`, `-fetch`, and the two
+observer rules), React 19 deprecations (`no-forward-ref`, `no-context-provider`, `no-use-context`,
+`no-clone-element`, the `no-children-*` set), naming conventions (`naming-convention-context-name`,
+`-id-name`, `-ref-name`) and `@eslint-react/no-array-index-key`.
+
+Rule ids also changed, so existing suppressions stop working — silently, since an `eslint-disable`
+naming an unknown rule is simply inert. Anything mentioning `react/*`, `react-hooks/*` or `import/*`
+needs rewriting to `@eslint-react/*`, `import-x/*` or `smartive/*`.
+
 ## Custom rules
 
 ### `smartive/forbid-component-props`
