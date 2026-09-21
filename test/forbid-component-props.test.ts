@@ -33,6 +33,30 @@ describe('smartive/forbid-component-props', () => {
         { code: '<Card className="p-4" />' },
         // an explicitly empty list disables the rule
         { code: '<Card className="p-4" />', options: [{ forbid: [] }] },
+        // the object form: the component is on the allow list
+        {
+          code: '<NextImage className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedFor: ['NextImage', 'NextLink'] }] }],
+        },
+        // the object form: the component matches an allowed pattern
+        {
+          code: '<ChevronIcon className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedForPatterns: ['*Icon', 'Mantine*'] }] }],
+        },
+        {
+          code: '<MantineButton className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedForPatterns: ['*Icon', 'Mantine*'] }] }],
+        },
+        // patterns match the full member expression name
+        {
+          code: '<Mantine.Button className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedForPatterns: ['Mantine.*'] }] }],
+        },
+        // a `?` in a pattern matches exactly one character
+        {
+          code: '<H1 className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedForPatterns: ['H?'] }] }],
+        },
       ],
       invalid: [
         {
@@ -56,6 +80,44 @@ describe('smartive/forbid-component-props', () => {
           // every forbidden prop on the element is reported, not just the first
           code: '<Card className="p-4" style={{}} />',
           options: [{ forbid: ['className', 'style'] }],
+          errors: [
+            { messageId: 'forbiddenProp', data: { prop: 'className' } },
+            { messageId: 'forbiddenProp', data: { prop: 'style' } },
+          ],
+        },
+        {
+          // the object form still forbids components that are not allowed
+          code: '<Card className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedFor: ['NextImage'] }] }],
+          errors: [{ messageId: 'forbiddenProp', data: { prop: 'className' } }],
+        },
+        {
+          // a pattern only matches the whole name, not a part of it
+          code: '<IconButton className="p-4" />',
+          options: [{ forbid: [{ propName: 'className', allowedForPatterns: ['*Icon'] }] }],
+          errors: [{ messageId: 'forbiddenProp', data: { prop: 'className' } }],
+        },
+        {
+          // a custom message replaces the default one
+          code: '<Card className="p-4" />',
+          options: [
+            {
+              forbid: [
+                {
+                  propName: 'className',
+                  allowedFor: ['NextImage', 'NextLink'],
+                  allowedForPatterns: ['*Icon', 'Mantine*'],
+                  message: 'Avoid using className except NextImage, NextLink, icons and Mantine components',
+                },
+              ],
+            },
+          ],
+          errors: [{ message: 'Avoid using className except NextImage, NextLink, icons and Mantine components' }],
+        },
+        {
+          // the string and object forms mix in one list
+          code: '<Card className="p-4" style={{}} />',
+          options: [{ forbid: ['style', { propName: 'className', allowedFor: ['NextImage'] }] }],
           errors: [
             { messageId: 'forbiddenProp', data: { prop: 'className' } },
             { messageId: 'forbiddenProp', data: { prop: 'style' } },
