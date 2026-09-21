@@ -141,6 +141,33 @@ Enabled in the `react` and `nextjs` rule sets as:
 'smartive/forbid-component-props': ['warn', { forbid: ['style', 'className'] }]
 ```
 
+Each entry in `forbid` is either a prop name or an object that narrows where the prop stays allowed:
+
+| Key                  | Meaning                                                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `propName`           | The forbidden prop (required).                                                           |
+| `allowedFor`         | Component names the prop is still allowed on, matched exactly.                           |
+| `allowedForPatterns` | Globs (`*` for any run of characters, `?` for one) the component name may match instead. |
+| `message`            | Replaces the default report message.                                                     |
+
+Component names are matched on their full JSX name, so `<Mantine.Button />` matches `Mantine.*`.
+
+```javascript
+'smartive/forbid-component-props': [
+  'error',
+  {
+    forbid: [
+      {
+        propName: 'className',
+        allowedFor: ['NextImage', 'NextLink'],
+        allowedForPatterns: ['*Icon', 'Mantine*'],
+        message: 'Avoid using className except NextImage, NextLink, icons and Mantine components',
+      },
+    ],
+  },
+]
+```
+
 ## Development
 
 ```sh
