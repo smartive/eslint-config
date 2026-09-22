@@ -15,10 +15,10 @@ const expectProblemOn = (type: ConfigType, fixture: string, line: number, what: 
 };
 
 /**
- * Warnings from `@smartive-eslint/forbid-component-props` on a given line. Matched on the message rather than
+ * Reports from `@smartive-eslint/forbid-component-props` on a given line. Matched on the message rather than
  * the rule id, like every other assertion here — the rule is ours, so the wording is ours to keep.
  */
-const forbiddenPropWarnings = (messages: Linter.LintMessage[], line: number): Linter.LintMessage[] =>
+const forbiddenPropReports = (messages: Linter.LintMessage[], line: number): Linter.LintMessage[] =>
   problemsOnLine(messages, line).filter((message) => message.message.includes('forbidden on components'));
 
 const expectClean = (type: ConfigType, fixture: string, what: string): void => {
@@ -74,14 +74,14 @@ export const runReactCases = (type: ConfigType): void => {
   expectProblemOn(type, 'rules-of-hooks.tsx', 7, 'flags a conditionally called hook');
   expectProblemOn(type, 'exhaustive-deps.tsx', 8, 'flags a missing effect dependency');
 
-  it('flags forbidden component props as warnings', async () => {
+  it('flags forbidden component props as errors', async () => {
     const messages = await lint(type, 'forbidden-component-props.tsx');
     const onJsx = problemsOnLine(messages, 7);
 
     for (const prop of ['className', 'style']) {
       assert.ok(
-        onJsx.some((message) => message.severity === 1 && message.message.includes(prop)),
-        `expected a warning about "${prop}" on line 7, got:\n${describeMessages(messages)}`,
+        onJsx.some((message) => message.severity === 2 && message.message.includes(prop)),
+        `expected an error about "${prop}" on line 7, got:\n${describeMessages(messages)}`,
       );
     }
   });
@@ -90,7 +90,7 @@ export const runReactCases = (type: ConfigType): void => {
     const messages = await lint(type, 'component-props-edge-cases.tsx');
 
     assert.deepEqual(
-      forbiddenPropWarnings(messages, 10),
+      forbiddenPropReports(messages, 10),
       [],
       `<div className style /> must stay clean — flagging it would be a false positive on every DOM element.\n${describeMessages(messages)}`,
     );
@@ -100,8 +100,8 @@ export const runReactCases = (type: ConfigType): void => {
     const messages = await lint(type, 'component-props-edge-cases.tsx');
 
     assert.ok(
-      forbiddenPropWarnings(messages, 13).some((message) => message.message.includes('className')),
-      `expected a warning for <Group.Item className />, got:\n${describeMessages(messages)}`,
+      forbiddenPropReports(messages, 13).some((message) => message.message.includes('className')),
+      `expected an error for <Group.Item className />, got:\n${describeMessages(messages)}`,
     );
   });
 
@@ -109,7 +109,7 @@ export const runReactCases = (type: ConfigType): void => {
     const messages = await lint(type, 'component-props-edge-cases.tsx');
 
     assert.deepEqual(
-      forbiddenPropWarnings(messages, 16),
+      forbiddenPropReports(messages, 16),
       [],
       `a spread carries no attribute name to check, got:\n${describeMessages(messages)}`,
     );
