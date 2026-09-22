@@ -48,9 +48,17 @@ export const runSharedCases = (type: ConfigType): void => {
   expectProblemOn(type, 'plain.js', 4, 'flags loose equality in a .js file');
 };
 
-/** Import resolution, which only the `typescript` and `react` rule sets enable. */
+/**
+ * Import resolution, which every rule set must provide.
+ *
+ * The two halves fail separately, so both are pinned: `unresolved-import.ts` catches a rule set that
+ * never switches the resolution rules on, and `alias-import.ts` catches one that switches them on
+ * without an `import-x/resolver-next` setting — the built-in fallback resolver does not read
+ * `tsconfig.json` `paths`, so it reports every aliased import as unresolvable.
+ */
 export const runImportCases = (type: ConfigType): void => {
   expectClean(type, 'clean-import.ts', 'resolves an extensionless relative import');
+  expectClean(type, 'alias-import.ts', 'resolves a tsconfig `paths` alias');
   expectProblemOn(type, 'unresolved-import.ts', 1, 'flags an unresolvable import');
 };
 
