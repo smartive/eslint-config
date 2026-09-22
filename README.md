@@ -48,6 +48,7 @@ To use eslint add the following to your package.json:
 - [`eslint-plugin-import-x`](https://github.com/un-ts/eslint-plugin-import-x) (`typescript` and `react` rule sets)
 - [`@eslint-react/eslint-plugin`](https://eslint-react.xyz/) (`react` and `nextjs` rule sets)
 - [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier)
+- [`@stylistic/eslint-plugin`](https://eslint.style/) (`react` and `nextjs` rule sets)
 
 `eslint-plugin-react`, `eslint-plugin-react-hooks` and `eslint-plugin-import` are no longer used.
 
@@ -113,6 +114,9 @@ How each kind of mention fails is worth knowing, because only two of the three a
 The third is the one to search for: turning a rule off under a namespace that no longer exists is not
 an error, so the override simply stops taking effect.
 
+The same release also adds three [stylistic JSX rules](#stylistic-jsx-rules) to the `react` and `nextjs`
+rule sets. They are new `error`s on code that passed on v8, and all three are auto-fixable.
+
 ## Upgrading from v7
 
 Expect new errors on code that passed before. ESLint React's `recommended-type-checked` preset is
@@ -150,6 +154,26 @@ observer rules), React 19 deprecations (`no-forward-ref`, `no-context-provider`,
 Rule ids also changed, so existing suppressions stop working — silently, since an `eslint-disable`
 naming an unknown rule is simply inert. Anything mentioning `react/*`, `react-hooks/*` or `import/*`
 needs rewriting to `@eslint-react/*`, `import-x/*` or `@smartive-eslint/*`.
+
+## Stylistic JSX rules
+
+[ESLint Stylistic](https://eslint.style/) is registered in the `react` and `nextjs` rule sets.
+
+Three rules are enabled:
+
+| Rule                                  | Flags                                                                                |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `@stylistic/jsx-curly-brace-presence` | `<Card label={'x'} />` and `<span>{'x'}</span>` — braces around a string literal     |
+| `@stylistic/jsx-self-closing-comp`    | `<Card></Card>` — a component with no children that does not close itself            |
+| `@stylistic/jsx-pascal-case`          | `<Test_component />` — a component name that is neither PascalCase nor a DOM element |
+
+All three are `error` and all three are auto-fixable, so `eslint --fix` clears them in one pass.
+
+`jsx-curly-brace-presence` is configured with an object and `propElementValues: 'always'`, which is what
+[its documentation recommends](https://eslint.style/rules/jsx-curly-brace-presence) — the brace-less
+`prop=<Icon />` form the `'never'` setting produces is "obscure, and intentionally undocumented". It
+would also fight Prettier, which puts the braces straight back, and ESLint reports the pair as a circular
+fix.
 
 ## Custom rules
 

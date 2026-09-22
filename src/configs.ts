@@ -1,5 +1,6 @@
 import eslintReact from '@eslint-react/eslint-plugin';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
 import type { Linter } from 'eslint';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import { createNodeResolver, importX } from 'eslint-plugin-import-x';
@@ -54,9 +55,13 @@ const jsDisableTypeCheckedReact: Linter.Config = {
   rules: eslintReact.configs['disable-type-checked'].rules as Linter.RulesRecord,
 };
 
+/**
+ * Only the three `@stylistic` JSX rules in `reactRules` are switched on — see the comment there.
+ * Registering the plugin also lets a consuming project opt into the rest of it by rule id.
+ */
 const reactConfig: Linter.Config = {
   name: '@smartive/eslint-config/react',
-  plugins: { '@smartive-eslint': smartivePlugin },
+  plugins: { '@smartive-eslint': smartivePlugin, '@stylistic': stylistic },
   rules: reactRules,
 };
 
