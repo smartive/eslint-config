@@ -28,7 +28,10 @@ export const typescriptRules: Linter.RulesRecord = {
 };
 
 export const reactRules: Linter.RulesRecord = {
-  'smartive/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
+  '@smartive-eslint/forbid-component-props': ['error', { forbid: ['style', 'className'] }],
+  '@stylistic/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never', propElementValues: 'always' }],
+  '@stylistic/jsx-self-closing-comp': ['error', { component: true, html: true }],
+  '@stylistic/jsx-pascal-case': 'error',
   '@typescript-eslint/no-misused-promises': [
     'error',
     {
