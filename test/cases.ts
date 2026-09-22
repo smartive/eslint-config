@@ -114,4 +114,32 @@ export const runReactCases = (type: ConfigType): void => {
       `a spread carries no attribute name to check, got:\n${describeMessages(messages)}`,
     );
   });
+
+  runStylisticJsxCases(type);
+};
+
+/**
+ * The three `@stylistic` JSX rules, which fill the gap left by `eslint-plugin-react`.
+ *
+ * Matched on the message rather than the rule id, like everything else here: ESLint Stylistic is one
+ * possible source for these checks, not the only conceivable one.
+ */
+const runStylisticJsxCases = (type: ConfigType): void => {
+  const expectMessageOn = (fixture: string, line: number, needle: string, what: string): void => {
+    it(what, async () => {
+      const messages = await lint(type, fixture);
+
+      assert.ok(
+        problemsOnLine(messages, line).some((message) => message.message.includes(needle)),
+        `expected a problem mentioning "${needle}" on ${fixture}:${line}, got:\n${describeMessages(messages)}`,
+      );
+    });
+  };
+
+  expectMessageOn('stylistic-jsx.tsx', 10, 'Curly braces are unnecessary', 'flags curly braces around a string prop');
+  expectMessageOn('stylistic-jsx.tsx', 13, 'Curly braces are unnecessary', 'flags curly braces around a string child');
+  expectMessageOn('stylistic-jsx.tsx', 16, 'self-closing', 'flags a childless component that is not self-closing');
+  expectMessageOn('stylistic-jsx.tsx', 19, 'PascalCase', 'flags a component name that is not PascalCase');
+
+  expectClean(type, 'stylistic-jsx-clean.tsx', 'leaves necessary braces, element props and real children alone');
 };
