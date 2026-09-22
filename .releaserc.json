@@ -1,5 +1,6 @@
 {
   "branches": [
+    "8.x",
     "main",
     {
       "name": "next",

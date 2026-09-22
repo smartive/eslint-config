@@ -7,6 +7,17 @@ export type ConfigType = Parameters<typeof config>[0];
 
 export const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 
+/**
+ * `eslint-import-resolver-typescript` finds its `tsconfig.json` relative to `process.cwd()`, not to the
+ * `cwd` handed to `ESLint` — so without this the fixtures' `paths` aliases are resolved against this
+ * repo's own tsconfig, which has none, and `alias-import.ts` looks unresolvable.
+ *
+ * Linting a real project always runs with the project root as the working directory; this makes the
+ * fixture directory behave like one. Safe as a module-level side effect because `node --test` runs each
+ * test file in its own process, and safe before `config()` is ever called because `linterFor` is lazy.
+ */
+process.chdir(FIXTURES);
+
 const linters = new Map<ConfigType, ESLint>();
 
 const linterFor = (type: ConfigType): ESLint => {

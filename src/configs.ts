@@ -60,10 +60,35 @@ const reactConfig: Linter.Config = {
   rules: reactRules,
 };
 
+/**
+ * `eslint-plugin-import-x` plus the resolvers its resolution rules need.
+ *
+ * Every rule set needs both halves. The plugin configs switch the resolution rules on; the
+ * `import-x/resolver-next` setting tells them how to resolve. Without the setting the plugin falls back
+ * to its built-in resolver, which knows nothing about `tsconfig.json` `paths`, so every aliased import
+ * (`@/foo`) is reported as unresolvable.
+ *
+ * A function, not a constant: `createTypeScriptImportResolver` reads `process.cwd()` when it is called,
+ * to find the `tsconfig.json` it resolves `paths` against. Building it at module load would pin the
+ * working directory at import time instead of at `config()` time.
+ */
+const importXConfigs = (): Linter.Config[] => [
+  importX.flatConfigs.errors as Linter.Config,
+  importX.flatConfigs.warnings as Linter.Config,
+  importX.flatConfigs.typescript as Linter.Config,
+  {
+    name: '@smartive/eslint-config/import-x-resolver',
+    settings: {
+      'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
+    },
+  },
+];
+
 export const flatConfigTypescript = (rulesOnly = false) =>
   defineConfig([
     js.configs.recommended,
     eslintPluginPrettierRecommended,
+    ...importXConfigs(),
     ...(rulesOnly
       ? [
           {
@@ -79,18 +104,7 @@ export const flatConfigTypescript = (rulesOnly = false) =>
             ),
           },
         ]
-      : [
-          importX.flatConfigs.errors,
-          importX.flatConfigs.warnings,
-          importX.flatConfigs.typescript,
-          {
-            settings: {
-              'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
-            },
-          },
-          ...tsEslint.configs.recommendedTypeChecked,
-          ...tsEslint.configs.stylisticTypeChecked,
-        ]),
+      : [...tsEslint.configs.recommendedTypeChecked, ...tsEslint.configs.stylisticTypeChecked]),
     baseConfig,
     jsDisableTypeChecked,
   ]);

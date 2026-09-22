@@ -8,7 +8,9 @@
     // real Next.js projects set this; without it the .js fixtures are not in the project
     "allowJs": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": { "@/*": ["./*"] }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs"]
 }
