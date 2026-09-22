@@ -109,13 +109,18 @@ How each kind of mention fails is worth knowing, because only two of the three a
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `'smartive/forbid-component-props': ['warn', …]` in a config  | ESLint refuses to start: `Could not find plugin "smartive" in configuration`                                 |
 | `// eslint-disable-next-line smartive/forbid-component-props` | `Definition for rule 'smartive/forbid-component-props' was not found`, and the suppressed warning comes back |
-| `'smartive/forbid-component-props': 'off'` in a config        | **silently ignored** — the rule stays on at its default `warn`                                               |
+| `'smartive/forbid-component-props': 'off'` in a config        | **silently ignored** — the rule stays on at its default `error`                                              |
 
 The third is the one to search for: turning a rule off under a namespace that no longer exists is not
 an error, so the override simply stops taking effect.
 
 The same release also adds three [stylistic JSX rules](#stylistic-jsx-rules) to the `react` and `nextjs`
 rule sets. They are new `error`s on code that passed on v8, and all three are auto-fixable.
+
+`@smartive-eslint/forbid-component-props` is raised from `warn` to `error` in the same release. It
+reports on exactly the code it reported on before, so nothing new is flagged — but a project that was
+carrying those warnings will now fail its lint run. It is not auto-fixable: each report needs either the
+prop removed, the component added to `allowedFor`/`allowedForPatterns`, or the rule turned down locally.
 
 ## Upgrading from v7
 
@@ -184,7 +189,7 @@ Forbids the given props on components (`<Foo />`, `<Foo.Bar />`) while leaving i
 Enabled in the `react` and `nextjs` rule sets as:
 
 ```javascript
-'@smartive-eslint/forbid-component-props': ['warn', { forbid: ['style', 'className'] }]
+'@smartive-eslint/forbid-component-props': ['error', { forbid: ['style', 'className'] }]
 ```
 
 Each entry in `forbid` is either a prop name or an object that narrows where the prop stays allowed:
