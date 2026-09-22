@@ -157,14 +157,7 @@ needs rewriting to `@eslint-react/*`, `import-x/*` or `@smartive-eslint/*`.
 
 ## Stylistic JSX rules
 
-[ESLint Stylistic](https://eslint.style/) is registered in the `react` and `nextjs` rule sets, which
-brings back `jsx-curly-brace-presence`. It lived in `eslint-plugin-react`, and that plugin is no longer
-used, so nothing provided it any more.
-
-Note that v7 never switched it on: it is absent from `eslint-plugin-react`'s `flat.recommended` and
-`flat['jsx-runtime']` presets and from `eslint-config-next`, and this config never configured it. What v7
-gave you was the _option_ to enable it yourself, because the `react` plugin was registered. Enabling it
-here is therefore a new check, not a restored one, and it will report on code that passed on v7.
+[ESLint Stylistic](https://eslint.style/) is registered in the `react` and `nextjs` rule sets.
 
 Three rules are enabled:
 
@@ -181,23 +174,6 @@ All three are `error` and all three are auto-fixable, so `eslint --fix` clears t
 `prop=<Icon />` form the `'never'` setting produces is "obscure, and intentionally undocumented". It
 would also fight Prettier, which puts the braces straight back, and ESLint reports the pair as a circular
 fix.
-
-### Why only three
-
-ESLint Stylistic ships 21 `jsx-*` rules. Prettier already formats JSX, so most of them either duplicate
-it or fight it:
-
-- **16 conflict with Prettier** — indentation, spacing, line breaks, quotes, `jsx-wrap-multilines` and so
-  on. All of them appear in `eslint-config-prettier`'s off-list.
-- **`jsx-function-call-newline` is redundant** — it never fires on Prettier-formatted code.
-- **`jsx-indent`, `jsx-props-no-multi-spaces` and `jsx-sort-props` are deprecated** upstream.
-
-The three that remain are the ones Prettier has no opinion about: they change which syntax is written,
-not how it is laid out.
-
-The plugin is registered rather than merely depended on, so a project that wants any of the others can
-switch it on by rule id in its own `eslint.config.mjs` — including the Prettier-conflicting ones, if it
-does not use Prettier.
 
 ## Custom rules
 
