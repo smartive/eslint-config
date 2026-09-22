@@ -81,7 +81,7 @@ export const forbidComponentProps: Rule.RuleModule = {
     type: 'suggestion',
     docs: {
       description: 'Forbid certain props on components.',
-      url: 'https://github.com/smartive/eslint-config#smartiveforbid-component-props',
+      url: 'https://github.com/smartive/eslint-config#smartive-eslintforbid-component-props',
     },
     schema: [
       {

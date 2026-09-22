@@ -28,7 +28,7 @@ export const typescriptRules: Linter.RulesRecord = {
 };
 
 export const reactRules: Linter.RulesRecord = {
-  'smartive/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
+  '@smartive-eslint/forbid-component-props': ['warn', { forbid: ['style', 'className'] }],
   '@typescript-eslint/no-misused-promises': [
     'error',
     {

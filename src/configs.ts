@@ -56,7 +56,7 @@ const jsDisableTypeCheckedReact: Linter.Config = {
 
 const reactConfig: Linter.Config = {
   name: '@smartive/eslint-config/react',
-  plugins: { smartive: smartivePlugin },
+  plugins: { '@smartive-eslint': smartivePlugin },
   rules: reactRules,
 };
 
