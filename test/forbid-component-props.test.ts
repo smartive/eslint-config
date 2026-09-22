@@ -17,7 +17,7 @@ const ruleTester = new RuleTester({
   },
 });
 
-describe('smartive/forbid-component-props', () => {
+describe('@smartive-eslint/forbid-component-props', () => {
   it('passes its rule tests', () => {
     ruleTester.run('forbid-component-props', forbidComponentProps, {
       valid: [

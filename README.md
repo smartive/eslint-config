@@ -91,6 +91,28 @@ ESLint React covers most of what is turned off. What is genuinely lost:
 | `react-hooks/config`, `react-hooks/gating`, `react-hooks/incompatible-library`, `react-hooks/preserve-manual-memoization` | none — ESLint React does not implement these React Compiler rules |
 | `react/no-unescaped-entities`                                                                                             | none                                                              |
 
+## Upgrading from v8
+
+The plugin namespace for this package's own rules changed from `smartive` to `@smartive-eslint`, so
+`smartive/forbid-component-props` is now `@smartive-eslint/forbid-component-props`. Nothing about the
+rule's behaviour or options changed. The shipped rule sets are updated; what needs changing is every
+mention of the old id in consuming projects:
+
+```sh
+$ grep -rn 'smartive/forbid-component-props' --include='*.ts' --include='*.tsx' --include='*.js' --include='*.mjs' .
+```
+
+How each kind of mention fails is worth knowing, because only two of the three are loud:
+
+| Mention                                                       | What happens on v9                                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `'smartive/forbid-component-props': ['warn', …]` in a config  | ESLint refuses to start: `Could not find plugin "smartive" in configuration`                                 |
+| `// eslint-disable-next-line smartive/forbid-component-props` | `Definition for rule 'smartive/forbid-component-props' was not found`, and the suppressed warning comes back |
+| `'smartive/forbid-component-props': 'off'` in a config        | **silently ignored** — the rule stays on at its default `warn`                                               |
+
+The third is the one to search for: turning a rule off under a namespace that no longer exists is not
+an error, so the override simply stops taking effect.
+
 ## Upgrading from v7
 
 Expect new errors on code that passed before. ESLint React's `recommended-type-checked` preset is
@@ -127,18 +149,18 @@ observer rules), React 19 deprecations (`no-forward-ref`, `no-context-provider`,
 
 Rule ids also changed, so existing suppressions stop working — silently, since an `eslint-disable`
 naming an unknown rule is simply inert. Anything mentioning `react/*`, `react-hooks/*` or `import/*`
-needs rewriting to `@eslint-react/*`, `import-x/*` or `smartive/*`.
+needs rewriting to `@eslint-react/*`, `import-x/*` or `@smartive-eslint/*`.
 
 ## Custom rules
 
-### `smartive/forbid-component-props`
+### `@smartive-eslint/forbid-component-props`
 
 Forbids the given props on components (`<Foo />`, `<Foo.Bar />`) while leaving intrinsic elements
 (`<div />`) alone. It replaces `react/forbid-component-props`, which has no equivalent in ESLint React.
 Enabled in the `react` and `nextjs` rule sets as:
 
 ```javascript
-'smartive/forbid-component-props': ['warn', { forbid: ['style', 'className'] }]
+'@smartive-eslint/forbid-component-props': ['warn', { forbid: ['style', 'className'] }]
 ```
 
 Each entry in `forbid` is either a prop name or an object that narrows where the prop stays allowed:
@@ -153,7 +175,7 @@ Each entry in `forbid` is either a prop name or an object that narrows where the
 Component names are matched on their full JSX name, so `<Mantine.Button />` matches `Mantine.*`.
 
 ```javascript
-'smartive/forbid-component-props': [
+'@smartive-eslint/forbid-component-props': [
   'error',
   {
     forbid: [

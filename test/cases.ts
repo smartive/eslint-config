@@ -15,7 +15,7 @@ const expectProblemOn = (type: ConfigType, fixture: string, line: number, what: 
 };
 
 /**
- * Warnings from `smartive/forbid-component-props` on a given line. Matched on the message rather than
+ * Warnings from `@smartive-eslint/forbid-component-props` on a given line. Matched on the message rather than
  * the rule id, like every other assertion here — the rule is ours, so the wording is ours to keep.
  */
 const forbiddenPropWarnings = (messages: Linter.LintMessage[], line: number): Linter.LintMessage[] =>
