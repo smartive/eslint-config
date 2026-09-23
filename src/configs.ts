@@ -123,6 +123,40 @@ export const flatConfigReact = () =>
     jsDisableTypeCheckedReact,
   ]);
 
+/** A rule is a warning whether it is written as a bare severity or as `[severity, ...options]`. */
+const isWarning = (entry: Linter.RuleEntry | undefined): boolean => {
+  const severity = Array.isArray(entry) ? entry[0] : entry;
+
+  return severity === 1 || severity === 'warn';
+};
+
+/**
+ * Every rule a rule set leaves at `warn` severity, switched off.
+ *
+ * Derived from the assembled configuration rather than hard-coded, so it keeps up with whatever the
+ * upstream plugins choose to warn about — most of them are not ours. In `nextjs`, for instance, 38 of the
+ * warnings come from ESLint React, 14 from `@next/next` and 6 from `jsx-a11y`, and only 5 from a
+ * `flatConfigs.warnings` block. Skipping the "warnings" presets would therefore miss almost all of them;
+ * the effective severity is the only thing worth keying on.
+ *
+ * Returned as one appended block rather than by rewriting the blocks above: in flat config the last
+ * assignment of a rule wins, so appending is enough, it leaves the upstream configurations untouched, and
+ * it shows up under its own name in `eslint --print-config`.
+ *
+ * Switching a rule off globally also switches it off inside a `files`-scoped block, which is only correct
+ * while no rule is a warning in one scope and an error in another. Nothing in these rule sets is today —
+ * `test/warnings.test.ts` pins that, because it is a property of upstream configs rather than of this one.
+ */
+export const silenceWarnings = (configs: Linter.Config[]): Linter.Config => ({
+  name: '@smartive/eslint-config/no-warnings',
+  rules: Object.fromEntries(
+    // a `Map` keeps the last entry per rule, which is the one that decides the effective severity
+    [...new Map(configs.flatMap((config) => Object.entries(config.rules ?? {})))]
+      .filter(([, entry]) => isWarning(entry))
+      .map(([rule]) => [rule, 'off'] as const),
+  ),
+});
+
 /**
  * Prefixes of every plugin `eslint-config-next` bundles that this config replaces.
  *
