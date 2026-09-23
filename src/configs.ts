@@ -2,8 +2,7 @@ import eslintReact from '@eslint-react/eslint-plugin';
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import type { Linter } from 'eslint';
-import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
-import { createNodeResolver, importX } from 'eslint-plugin-import-x';
+import { importX } from 'eslint-plugin-import-x';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
@@ -84,7 +83,12 @@ const importXConfigs = (): Linter.Config[] => [
   {
     name: '@smartive/eslint-config/import-x-resolver',
     settings: {
-      'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
+      'import-x/resolver': {
+        node: true,
+        typescript: {
+          alwaysTryTypes: true,
+        },
+      },
     },
   },
 ];
