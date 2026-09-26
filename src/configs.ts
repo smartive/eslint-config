@@ -87,6 +87,17 @@ const importXConfigs = (): Linter.Config[] => [
       'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
     },
   },
+  {
+    name: '@smartive/eslint-config/import-x-overrides',
+    rules: {
+      // `import-x/no-rename-default` forbids importing a default export under a different name. Renaming
+      // a default import is deliberate and legitimate — a default export carries no name at the import
+      // site, which is the point of it — so the rule reports working code. It also has to build an export
+      // map of every module it follows to learn what the default was called, which is the expensive part
+      // of this plugin, and it comes from `flatConfigs.warnings`, so nothing else here switches it off.
+      'import-x/no-rename-default': 'off',
+    },
+  },
 ];
 
 export const flatConfigTypescript = (rulesOnly = false) =>

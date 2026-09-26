@@ -60,6 +60,10 @@ export const runImportCases = (type: ConfigType): void => {
   expectClean(type, 'clean-import.ts', 'resolves an extensionless relative import');
   expectClean(type, 'alias-import.ts', 'resolves a tsconfig `paths` alias');
   expectProblemOn(type, 'unresolved-import.ts', 1, 'flags an unresolvable import');
+
+  // `import-x/no-rename-default` is deliberately off — it comes from `flatConfigs.warnings`, so an
+  // upstream change is the thing most likely to switch it back on without anyone noticing here
+  expectClean(type, 'renamed-default.ts', 'does not flag a renamed default import');
 };
 
 /**
