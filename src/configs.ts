@@ -96,6 +96,13 @@ const importXConfigs = (): Linter.Config[] => [
       // map of every module it follows to learn what the default was called, which is the expensive part
       // of this plugin, and it comes from `flatConfigs.warnings`, so nothing else here switches it off.
       'import-x/no-rename-default': 'off',
+
+      // `import-x/no-named-as-default` reports a default import whose name matches one of the module's
+      // *named* exports, on the theory that the named one was meant. A module that exports `Button` both
+      // as a named export and as its default is a normal shape, and importing the default as `Button` is
+      // then exactly right, so the rule fires on correct code. Same cost as the rule above: it reads the
+      // export map of every module it follows, and it comes from the same `flatConfigs.warnings` preset.
+      'import-x/no-named-as-default': 'off',
     },
   },
 ];
