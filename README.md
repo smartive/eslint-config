@@ -31,6 +31,35 @@ export default config('react');
 export default config('nextjs');
 ```
 
+#### Options
+
+##### `warnings`
+
+Every rule set reports some problems as warnings rather than errors. Pass `warnings: false` to switch all
+of them off and keep only the errors — useful where a warning is noise rather than a signal, such as a CI
+job that only gates on errors, or a large codebase adopting this config gradually.
+
+```javascript
+export default config('nextjs', { warnings: false });
+```
+
+The warnings come from several plugins, not just this package — in the `nextjs` rule set, 38 of them come
+from ESLint React, 14 from `@next/next` and 6 from `jsx-a11y`. The option keys on the severity a rule ends
+up with, so it covers all of them:
+
+| Rule set     | default                 | `warnings: false`      |
+| ------------ | ----------------------- | ---------------------- |
+| `typescript` | 5 warnings, 94 errors   | 0 warnings, 94 errors  |
+| `react`      | 43 warnings, 125 errors | 0 warnings, 125 errors |
+| `nextjs`     | 64 warnings, 133 errors | 0 warnings, 133 errors |
+
+This changes severity, not which rules exist. Re-enable any of them in a later block of your own
+configuration and it applies as usual, since the last assignment of a rule wins:
+
+```javascript
+export default [...config('nextjs', { warnings: false }), { rules: { '@eslint-react/exhaustive-deps': 'warn' } }];
+```
+
 ### NPM scripts
 
 To use eslint add the following to your package.json:
@@ -45,7 +74,7 @@ To use eslint add the following to your package.json:
 ## Included plugins
 
 - [`typescript-eslint`](https://typescript-eslint.io/)
-- [`eslint-plugin-import-x`](https://github.com/un-ts/eslint-plugin-import-x) (`typescript` and `react` rule sets)
+- [`eslint-plugin-import-x`](https://github.com/un-ts/eslint-plugin-import-x)
 - [`@eslint-react/eslint-plugin`](https://eslint-react.xyz/) (`react` and `nextjs` rule sets)
 - [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier)
 - [`@stylistic/eslint-plugin`](https://eslint.style/) (`react` and `nextjs` rule sets)
