@@ -104,12 +104,6 @@ export const flatConfigTypescript = (rulesOnly = false) =>
     ...(rulesOnly
       ? [
           {
-            // `eslint-config-next` registers this plugin, but only for `**/*.ts` and `**/*.tsx`. Without
-            // registering it here, every `@typescript-eslint/*` rule reference — these, plus the ones in
-            // `typescriptRules` and `reactRules` — makes ESLint fail with `Could not find plugin` the
-            // moment a `.js` file is linted. Registering it twice is harmless: it is the same instance,
-            // since npm dedupes `typescript-eslint` between this package and `eslint-config-next`.
-            plugins: { '@typescript-eslint': tsEslint.plugin },
             rules: tsEslintConfigs.reduce(
               (combinedRules, { rules }) => ({ ...combinedRules, ...(rules ? rules : {}) }),
               {} as Linter.RulesRecord,
@@ -159,11 +153,30 @@ const disableReplacedNextRules = (configs: Linter.Config[]): Linter.RulesRecord 
       .map((rule) => [rule, 'off'] as const),
   );
 
+/**
+ * The `@typescript-eslint` plugin instance `eslint-config-next` registers, falling back to this package's own.
+ *
+ * ESLint refuses to merge two config blocks that register different objects under the same plugin name
+ * ("Cannot redefine plugin"). npm does not guarantee a single `typescript-eslint` copy between this package
+ * and `eslint-config-next` — a lockfile can keep one nested under each — so registering this package's
+ * instance next to Next's breaks every `.ts` and `.tsx` file whenever the copies differ.
+ */
+const typescriptEslintPluginOf = (configs: Linter.Config[]) =>
+  configs.find(({ plugins }) => plugins?.['@typescript-eslint'])?.plugins?.['@typescript-eslint'] ?? tsEslint.plugin;
+
 export const flatConfigNext = () => {
   const nextConfigs = createRequire(import.meta.url)('eslint-config-next/core-web-vitals') as Linter.Config[];
 
   return defineConfig([
     ...nextConfigs,
+    {
+      name: '@smartive/eslint-config/next-typescript-plugin',
+      // `eslint-config-next` registers this plugin, but only for `**/*.ts` and `**/*.tsx`. Without
+      // registering it for every file, each `@typescript-eslint/*` rule reference — from
+      // `flatConfigTypescript`, `typescriptRules` and `reactRules` — makes ESLint fail with
+      // `Could not find plugin` the moment a `.js` file is linted.
+      plugins: { '@typescript-eslint': typescriptEslintPluginOf(nextConfigs) },
+    },
     ...flatConfigTypescript(true),
     eslintReact.configs['recommended-type-checked'],
     {
