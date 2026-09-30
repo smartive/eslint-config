@@ -85,6 +85,10 @@ const importXConfigs = (): Linter.Config[] => [
     name: '@smartive/eslint-config/import-x-resolver',
     settings: {
       'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
+      // The `typescript` preset names `@typescript-eslint/parser` by package, which `import-x` resolves from
+      // the project root — so it fails when npm nests the parser instead of hoisting it. Without this
+      // setting, `import-x` parses imported modules with the file's own `languageOptions.parser` object.
+      'import-x/parsers': null,
     },
   },
   {
