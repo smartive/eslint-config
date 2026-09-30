@@ -12,6 +12,11 @@ import tsEslint from 'typescript-eslint';
 import { smartivePlugin } from './plugin/index.js';
 import { defaultRules, prettierRules, reactRules, typescriptRules } from './rules.js';
 
+// Resolved through `typescript-eslint`, so it's the same copy as `tsEslint.parser`, wherever npm puts it.
+const typescriptEslintParserPath = createRequire(createRequire(import.meta.url).resolve('typescript-eslint')).resolve(
+  '@typescript-eslint/parser',
+);
+
 const tsEslintConfigs = [...tsEslint.configs.recommendedTypeChecked, ...tsEslint.configs.stylisticTypeChecked];
 
 const baseConfig: Linter.Config = {
@@ -86,9 +91,9 @@ const importXConfigs = (): Linter.Config[] => [
     settings: {
       'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true }), createNodeResolver()],
       // The `typescript` preset names `@typescript-eslint/parser` by package, which `import-x` resolves from
-      // the project root — so it fails when npm nests the parser instead of hoisting it. Without this
-      // setting, `import-x` parses imported modules with the file's own `languageOptions.parser` object.
-      'import-x/parsers': null,
+      // the project root — so it fails when npm nests the parser instead of hoisting it. An absolute path
+      // loads from anywhere, and keeps TypeScript imports parseable from files that use another parser.
+      'import-x/parsers': { [typescriptEslintParserPath]: ['.ts', '.tsx', '.cts', '.mts'] },
     },
   },
   {
