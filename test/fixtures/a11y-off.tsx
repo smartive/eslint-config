@@ -11,6 +11,8 @@ export const Off = ({ onClose }: { onClose: () => void }): ReactNode => (
     <label>Name</label>
     <video src="/x.mp4" />
     <a href="/x">click here</a>
+    <svg role="img" />
+    <div aria-hidden role="presentation" />
     <iframe src="https://example.com" />
     <marquee>news</marquee>
     <div onMouseOver={onClose} />

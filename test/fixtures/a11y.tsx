@@ -18,8 +18,5 @@ export const A11y = (): ReactNode => (
     <button role="button" type="button">
       x
     </button>
-    <div role="heading" aria-level={2}>
-      x
-    </div>
   </main>
 );

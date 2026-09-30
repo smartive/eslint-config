@@ -208,7 +208,6 @@ const runA11yCases = (type: ConfigType): void => {
   expectSeverityOn(type, 'a11y.tsx', 17, 'error', 'flags an invalid lang value');
   // `role="list"` is exempt, but only on lists
   expectSeverityOn(type, 'a11y.tsx', 18, 'error', 'flags a redundant role');
-  expectSeverityOn(type, 'a11y.tsx', 21, 'warn', 'flags a role that has a native element');
 
   it('does not judge the wording of alt text', async () => {
     const messages = await lint(type, 'img-alt-wording.tsx');
