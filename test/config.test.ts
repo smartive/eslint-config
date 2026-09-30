@@ -45,3 +45,29 @@ describe('custom rule namespace', () => {
     });
   }
 });
+
+/**
+ * The accessibility rules' prefix is public API for the same reason: consumers name it in `eslint-disable`
+ * comments. It changed from `jsx-a11y` to `jsx-a11y-x` in v10; this pins it.
+ */
+describe('accessibility rule namespace', () => {
+  for (const type of ['react', 'nextjs'] satisfies ConfigType[]) {
+    it(`reports accessibility rules as "jsx-a11y-x/..." in "${type}"`, async () => {
+      const messages = await lint(type, 'a11y.tsx');
+
+      const ruleIds = [
+        ...new Set(
+          messages
+            .filter((message) => message.line === 5 && message.message.includes('alt'))
+            .map((message) => message.ruleId),
+        ),
+      ];
+
+      assert.deepEqual(
+        ruleIds,
+        ['jsx-a11y-x/alt-text'],
+        `expected the "jsx-a11y-x" prefix, got:\n${describeMessages(messages)}`,
+      );
+    });
+  }
+});

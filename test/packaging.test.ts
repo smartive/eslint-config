@@ -11,6 +11,7 @@ const DIST = join(ROOT, 'dist');
 type Manifest = {
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
+  peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   devDependencies?: Record<string, string>;
 };
 
@@ -82,6 +83,18 @@ describe('packaging', () => {
           .map((pkg) => `  ${pkg} (currently: ${manifest.devDependencies?.[pkg] ? 'devDependency' : 'nowhere'})`)
           .join('\n'),
     );
+  });
+
+  // an optional peer is missing in every project that does not use the rule set needing it, so a static
+  // import of one crashes `config()` for all rule sets there; they have to be required on demand
+  it('never imports an optional peer at module load', () => {
+    const optional = Object.entries(manifest.peerDependenciesMeta ?? {})
+      .filter(([, meta]) => meta.optional)
+      .map(([pkg]) => pkg);
+
+    const eager = [...importedPackages()].filter((pkg) => optional.includes(pkg)).sort();
+
+    assert.deepEqual(eager, [], `dist/ statically imports these optional peers:\n  ${eager.join('\n  ')}`);
   });
 
   it('publishes the built entry points', () => {
