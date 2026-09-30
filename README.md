@@ -107,7 +107,7 @@ $ npm install -D @next/eslint-plugin-next@16
 The `@next/next` rules, their severities and the ignored paths are the same as before. What changes:
 
 - **Accessibility checks are now errors, and there are more of them.** `react` and `nextjs` switch on
-  `eslint-plugin-jsx-a11y-x`'s recommended preset with a few rules turned off — 21 rules, all `error` (see
+  `eslint-plugin-jsx-a11y-x`'s recommended preset with a few rules turned off — 20 rules at `error` and 2 at `warn` (see
   [Accessibility rules](#accessibility-rules)). That includes the six `jsx-a11y` rules `nextjs` had as
   `warn` in v9, so a Next.js project that carried those warnings now fails its lint run.
 - **`react` gains the rest of what `nextjs` already had** that is not Next.js-specific:
@@ -199,13 +199,14 @@ needs rewriting to `@eslint-react/*`, `import-x/*` or `@smartive-eslint/*`.
 
 The `react` and `nextjs` rule sets use
 [`eslint-plugin-jsx-a11y-x`](https://github.com/es-tooling/eslint-plugin-jsx-a11y-x)'s recommended
-preset, with every rule at `error`. Its rules are named `jsx-a11y-x/…`, after the plugin. On top of it, two rules the
-preset leaves out are switched on:
+preset, with every rule at `error`. Its rules are named `jsx-a11y-x/…`, after the plugin. On top of it, three
+rules the preset leaves out are switched on:
 
-| Rule                                     | Flags                                                   |
-| ---------------------------------------- | ------------------------------------------------------- |
-| `jsx-a11y-x/no-aria-hidden-on-focusable` | `aria-hidden` on something the keyboard can still focus |
-| `jsx-a11y-x/lang`                        | an invalid `lang` on `<html>`, such as `lang="english"` |
+| Rule                                     | Level   | Flags                                                              |
+| ---------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `jsx-a11y-x/lang`                        | `error` | an invalid `lang` on `<html>`, such as `lang="english"`            |
+| `jsx-a11y-x/no-aria-hidden-on-focusable` | `warn`  | `aria-hidden` on something the keyboard can still focus            |
+| `jsx-a11y-x/prefer-tag-over-role`        | `warn`  | a `role` that has a native element, such as `<div role="heading">` |
 
 and these are switched off:
 
@@ -224,8 +225,7 @@ and these are switched off:
 | `jsx-a11y-x/no-distracting-elements`                | `<marquee>` and `<blink>` do not appear in modern React code                        |
 | `jsx-a11y-x/mouse-events-have-key-events`           | also fires when hovering reveals nothing essential, e.g. analytics or prefetching   |
 
-`control-has-associated-label` and `anchor-ambiguous-text` are off in the preset already, and
-`prefer-tag-over-role` is not part of it. In `nextjs`, `alt-text` also checks `next/image`'s `<Image>`.
+`control-has-associated-label` and `anchor-ambiguous-text` are off in the preset already. In `nextjs`, `alt-text` also checks `next/image`'s `<Image>`.
 
 `jsx-a11y-x/no-redundant-roles` stays on, but allows `role="list"` on `<ul>` and `<ol>`: Safari drops the
 list semantics of a list styled `list-style: none` (Tailwind's `list-none`, for instance), and

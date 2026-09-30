@@ -58,7 +58,8 @@ export const a11yRules: Linter.RulesRecord = {
   'jsx-a11y-x/role-has-required-aria-props': 'error',
   'jsx-a11y-x/role-supports-aria-props': 'error',
 
-  'jsx-a11y-x/no-aria-hidden-on-focusable': 'error',
+  'jsx-a11y-x/no-aria-hidden-on-focusable': 'warn',
+  'jsx-a11y-x/prefer-tag-over-role': 'warn',
   'jsx-a11y-x/lang': 'error',
 
   'jsx-a11y-x/anchor-is-valid': 'off',
