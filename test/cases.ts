@@ -1,7 +1,7 @@
 import type { Linter } from 'eslint';
 import assert from 'node:assert/strict';
 import { it } from 'node:test';
-import { describeMessages, lint, problemsOnLine, type ConfigType } from './helpers.ts';
+import { describeMessages, isIgnored, lint, problemsOnLine, type ConfigType } from './helpers.ts';
 
 const expectProblemOn = (type: ConfigType, fixture: string, line: number, what: string): void => {
   it(what, async () => {
@@ -20,6 +20,26 @@ const expectProblemOn = (type: ConfigType, fixture: string, line: number, what: 
  */
 const forbiddenPropReports = (messages: Linter.LintMessage[], line: number): Linter.LintMessage[] =>
   problemsOnLine(messages, line).filter((message) => message.message.includes('forbidden on components'));
+
+const SEVERITY = { warn: 1, error: 2 } as const;
+
+/** Like `expectProblemOn`, but also pins how severe the problem is. */
+const expectSeverityOn = (
+  type: ConfigType,
+  fixture: string,
+  line: number,
+  severity: keyof typeof SEVERITY,
+  what: string,
+): void => {
+  it(what, async () => {
+    const messages = await lint(type, fixture);
+
+    assert.ok(
+      problemsOnLine(messages, line).some((message) => message.severity === SEVERITY[severity]),
+      `expected a ${severity} on ${fixture}:${line}, got:\n${describeMessages(messages)}`,
+    );
+  });
+};
 
 const expectClean = (type: ConfigType, fixture: string, what: string): void => {
   it(what, async () => {
@@ -69,15 +89,48 @@ export const runImportCases = (type: ConfigType): void => {
 };
 
 /**
- * Rules that only the `nextjs` rule set provides, because they come from `eslint-config-next`.
- *
- * Asserted by line, not by rule id, so they keep holding if the plugin behind them is swapped — the
- * accessibility rules come from `eslint-plugin-jsx-a11y` and `@next/eslint-plugin-next`, the import
- * rule from `eslint-plugin-import`, and any of those may be replaced.
+ * What only the `nextjs` rule set adds on top of `react`: the `@next/next` rules, `next/image`'s
+ * `<Image>` counted as an image, and the ignores for Next.js build output.
  */
 export const runNextOnlyCases = (type: ConfigType): void => {
-  expectProblemOn(type, 'next-plugins.tsx', 4, 'flags an <img> without an alt attribute');
-  expectProblemOn(type, 'next-plugins.tsx', 7, 'flags an anonymous default export');
+  // `core-web-vitals` raises `no-sync-scripts` and `no-html-link-for-pages` from warning to error, so
+  // the severity is part of the behaviour: a rule set carrying only the `recommended` preset would pass
+  // a build that should fail
+  expectSeverityOn(type, 'next-rules.tsx', 5, 'error', 'flags a synchronous script as an error');
+  expectSeverityOn(type, 'next-rules.tsx', 8, 'error', 'flags an <a> to a page as an error');
+  expectSeverityOn(type, 'next-rules.tsx', 11, 'error', 'flags an inline <Script> without an id');
+  expectSeverityOn(type, 'next-rules.tsx', 15, 'error', 'flags an assignment to `module`');
+  expectClean(type, 'pages/about.tsx', 'reports nothing for a clean page');
+
+  expectSeverityOn(type, 'next-image.tsx', 6, 'error', 'flags an <Image> without an alt attribute');
+
+  // Next.js build output and its generated type declarations are never linted
+  for (const path of ['.next/server/page.js', 'out/index.js', 'build/index.js', 'next-env.d.ts']) {
+    it(`ignores ${path}`, async () => {
+      assert.equal(await isIgnored(type, path), true);
+    });
+  }
+
+  it('only ignores `build/` at the root', async () => {
+    assert.equal(await isIgnored(type, 'src/build/index.ts'), false);
+  });
+};
+
+/** The Next.js-only behaviour above must not leak into the plain `react` rule set. */
+export const runReactOnlyCases = (type: ConfigType): void => {
+  it('does not treat a component named <Image> as an image', async () => {
+    const messages = await lint(type, 'next-image.tsx');
+
+    assert.deepEqual(
+      problemsOnLine(messages, 6).filter((message) => message.message.includes('alt')),
+      [],
+      `outside Next.js, <Image> is just a component, got:\n${describeMessages(messages)}`,
+    );
+  });
+
+  it('does not ignore build/', async () => {
+    assert.equal(await isIgnored(type, 'build/index.js'), false);
+  });
 };
 
 /** React/JSX behaviour shared by the `react` and `nextjs` rule sets. */
@@ -129,7 +182,62 @@ export const runReactCases = (type: ConfigType): void => {
     );
   });
 
+  runA11yCases(type);
   runStylisticJsxCases(type);
+};
+
+/**
+ * The accessibility checks — `eslint-plugin-jsx-a11y-x`'s recommended preset with a few rules switched
+ * off — and the framework-agnostic parts of `eslint-config-next`: anonymous default exports and JSX in
+ * `.js` files.
+ */
+const runA11yCases = (type: ConfigType): void => {
+  // the six `eslint-config-next` has, now errors
+  expectSeverityOn(type, 'a11y.tsx', 5, 'error', 'flags an <img> without an alt attribute');
+  expectSeverityOn(type, 'a11y.tsx', 6, 'error', 'flags an unknown aria-* attribute');
+  expectSeverityOn(type, 'a11y.tsx', 7, 'error', 'flags an invalid aria-* value');
+  expectSeverityOn(type, 'a11y.tsx', 8, 'error', 'flags aria-* on an element that does not support it');
+  expectSeverityOn(type, 'a11y.tsx', 9, 'error', 'flags a role missing its required aria-* attributes');
+  expectSeverityOn(type, 'a11y.tsx', 10, 'error', 'flags an aria-* attribute the role does not support');
+
+  // a sample of the rest of the recommended preset, plus the two rules added on top of it
+  expectSeverityOn(type, 'a11y.tsx', 11, 'error', 'flags a role that does not exist');
+  expectSeverityOn(type, 'a11y.tsx', 12, 'error', 'flags a link without content');
+  expectSeverityOn(type, 'a11y.tsx', 13, 'warn', 'flags aria-hidden on a focusable element');
+  expectSeverityOn(type, 'a11y.tsx', 16, 'error', 'flags an <object> without alternative text');
+  expectSeverityOn(type, 'a11y.tsx', 17, 'error', 'flags an invalid lang value');
+  // `role="list"` is exempt, but only on lists
+  expectSeverityOn(type, 'a11y.tsx', 18, 'error', 'flags a redundant role');
+
+  it('does not judge the wording of alt text', async () => {
+    const messages = await lint(type, 'img-alt-wording.tsx');
+
+    assert.deepEqual(
+      problemsOnLine(messages, 4).filter((message) => message.message.includes('alt')),
+      [],
+      `expected no report about the alt text, got:\n${describeMessages(messages)}`,
+    );
+  });
+
+  // the rules switched off: too many reports on correct code, or needing a fix the linter cannot judge
+  it('does not report what the switched-off accessibility rules would flag', async () => {
+    const messages = await lint(type, 'a11y-off.tsx');
+
+    assert.deepEqual(messages, [], `expected no problems in a11y-off.tsx, got:\n${describeMessages(messages)}`);
+  });
+
+  expectSeverityOn(type, 'anonymous-default-export.tsx', 4, 'warn', 'flags an anonymous default export');
+
+  // parsing JSX in a .js file at all is the point — a parse error would land on this line too, so the
+  // assertion is that the one problem there is the missing alt text
+  it('parses JSX in a plain .js file', async () => {
+    const messages = await lint(type, 'jsx-in-js.js');
+
+    assert.ok(
+      messages.every((message) => !message.fatal) && problemsOnLine(messages, 2).some((m) => m.message.includes('alt')),
+      `expected the missing alt on jsx-in-js.js:2 and no parse error, got:\n${describeMessages(messages)}`,
+    );
+  });
 };
 
 /**

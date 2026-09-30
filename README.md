@@ -26,7 +26,7 @@ export default config('typescript');
 export default config('react');
 
 // .. or Next.js applications
-// make sure to add `eslint-config-next@16`
+// make sure to add `@next/eslint-plugin-next@16`
 // to your devDependencies
 export default config('nextjs');
 ```
@@ -45,12 +45,16 @@ To use eslint add the following to your package.json:
 ## Included plugins
 
 - [`typescript-eslint`](https://typescript-eslint.io/)
-- [`eslint-plugin-import-x`](https://github.com/un-ts/eslint-plugin-import-x) (`typescript` and `react` rule sets)
+- [`eslint-plugin-import-x`](https://github.com/un-ts/eslint-plugin-import-x)
 - [`@eslint-react/eslint-plugin`](https://eslint-react.xyz/) (`react` and `nextjs` rule sets)
+- [`eslint-plugin-jsx-a11y-x`](https://github.com/es-tooling/eslint-plugin-jsx-a11y-x) (`react` and `nextjs` rule sets)
 - [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier)
 - [`@stylistic/eslint-plugin`](https://eslint.style/) (`react` and `nextjs` rule sets)
+- [`@next/eslint-plugin-next`](https://nextjs.org/docs/app/api-reference/config/eslint) (`nextjs` rule set, as an
+  optional peer dependency)
 
-`eslint-plugin-react`, `eslint-plugin-react-hooks` and `eslint-plugin-import` are no longer used.
+`eslint-config-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-import` and
+`eslint-plugin-jsx-a11y` are no longer used.
 
 ### ESLint 10 is required
 
@@ -58,39 +62,70 @@ To use eslint add the following to your package.json:
 that its `peerDependencies` say `eslint: "*"`, so npm will not warn you about an older ESLint — it will
 simply misbehave at some point.
 
-### `eslint-config-next` and ESLint 10
+### Next.js without `eslint-config-next`
 
-`eslint-config-next` bundles `eslint-plugin-react`, which supports ESLint 9 at most — its peer range ends
-at `^9.7`, and on ESLint 10 every one of its rules throws while loading, because React version detection
-uses the `context.getFilename()` API that ESLint 10 removed. The same config parses plain JavaScript with
-the Babel parser Next.js bundles, and that parser calls `scopeManager.addGlobals()`, also removed in
-ESLint 10, so linting any `.js` file throws as well
-([vercel/next.js#89764](https://github.com/vercel/next.js/issues/89764), still open — there is no fix in
-`eslint-config-next@canary` either).
+`eslint-config-next` does not work on ESLint 10: it bundles `eslint-plugin-react`, whose rules all throw
+while loading because React version detection calls the `context.getFilename()` API that ESLint 10
+removed, and it parses plain JavaScript with a Babel parser that calls the removed
+`scopeManager.addGlobals()` ([vercel/next.js#89764](https://github.com/vercel/next.js/issues/89764)). This
+package therefore rebuilds what it provides from ESLint 10 compatible parts, split by where each part
+makes sense:
 
-The `nextjs` rule set therefore:
+| From `eslint-config-next/core-web-vitals`           | Here                                                                                                           | Rule set |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------- |
+| 6 `jsx-a11y` rules, all `warn`                      | `eslint-plugin-jsx-a11y-x`'s recommended preset, all `error` — see [Accessibility rules](#accessibility-rules) | `react`  |
+| `import/no-anonymous-default-export`                | `import-x/no-anonymous-default-export`                                                                         | `react`  |
+| Babel parser, JSX in `.js`                          | the typescript-eslint parser, with JSX enabled in `.js`, `.jsx` and `.mjs`                                     | `react`  |
+| `eslint-plugin-react`, `eslint-plugin-react-hooks`  | ESLint React (see below for what it does not cover)                                                            | `react`  |
+| `@next/next` rules, `core-web-vitals` severities    | `@next/eslint-plugin-next`, taken from its own `core-web-vitals` config                                        | `nextjs` |
+| `jsx-a11y/alt-text` also checking `<Image>`         | the same option                                                                                                | `nextjs` |
+| ignores `.next/`, `out/`, `build/`, `next-env.d.ts` | the same ignores                                                                                               | `nextjs` |
 
-- turns off every rule `eslint-config-next` enables that comes from a plugin replaced here —
-  `eslint-plugin-react` (38 rules), `eslint-plugin-react-hooks` (16) and `eslint-plugin-import` (1). The
-  list is derived from the loaded config rather than hard-coded, so it tracks upstream changes.
-- restores the one import rule from `eslint-plugin-import-x`, so no coverage is lost.
-- pins `settings.react.version`, so re-enabling any of those rules in a consuming project degrades to a
-  normal lint result instead of a crash.
-- parses `.js`, `.jsx` and `.mjs` with the typescript-eslint parser instead of the Babel one.
+The accessibility rules are named after the fork, so `jsx-a11y/alt-text` becomes `jsx-a11y-x/alt-text`.
+`@next/eslint-plugin-next` is an optional
+peer dependency, loaded only when `config('nextjs')` is called, so the other rule sets do not need it.
 
-`jsx-a11y` (6 rules) and `@next/next` (22 rules) are left untouched — nothing here replaces them. Both
-declare peer ranges ending at ESLint 9, but both work on ESLint 10.
-
-ESLint React covers most of what is turned off. What is genuinely lost:
+ESLint React covers most of `eslint-plugin-react` and `eslint-plugin-react-hooks`. What is genuinely lost:
 
 | Rule                                                                                                                      | Replacement                                                       |
 | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `import/no-anonymous-default-export`                                                                                      | `import-x/no-anonymous-default-export`, enabled in its place      |
 | `react/jsx-no-duplicate-props`                                                                                            | TypeScript reports this as `TS17001`                              |
 | `react/jsx-uses-react`, `react/jsx-uses-vars`, `react/jsx-no-undef`                                                       | redundant — ESLint 10 tracks JSX references natively              |
 | `react/no-is-mounted`, `react/require-render-return`                                                                      | class-component patterns, not relevant to modern React            |
 | `react-hooks/config`, `react-hooks/gating`, `react-hooks/incompatible-library`, `react-hooks/preserve-manual-memoization` | none — ESLint React does not implement these React Compiler rules |
 | `react/no-unescaped-entities`                                                                                             | none                                                              |
+
+## Upgrading from v9
+
+`nextjs` no longer loads `eslint-config-next`. Replace it in your devDependencies:
+
+```sh
+$ npm uninstall eslint-config-next
+$ npm install -D @next/eslint-plugin-next@16
+```
+
+The `@next/next` rules, their severities and the ignored paths are the same as before. What changes:
+
+- **Accessibility checks are now errors, and there are more of them.** `react` and `nextjs` switch on
+  `eslint-plugin-jsx-a11y-x`'s recommended preset with a few rules turned off — 20 rules at `error` and 1 at `warn` (see
+  [Accessibility rules](#accessibility-rules)). That includes the six `jsx-a11y` rules `nextjs` had as
+  `warn` in v9, so a Next.js project that carried those warnings now fails its lint run.
+- **`react` gains the rest of what `nextjs` already had** that is not Next.js-specific:
+  `import-x/no-anonymous-default-export` (`warn`), and JSX in plain `.js` files now parses.
+- **`react/*`, `react-hooks/*` and `import/*` rule ids are gone from `nextjs`.** They came from the plugins
+  `eslint-config-next` registered, and v9 switched every one of them off anyway. A consuming config that
+  turns one of them back on now fails with `Could not find plugin`, and an `eslint-disable` comment naming
+  one reports `Definition for rule … was not found`. Use the `@eslint-react/*` or `import-x/*` equivalent.
+- **Accessibility rules are renamed from `jsx-a11y/*` to `jsx-a11y-x/*`**, after the fork that provides
+  them. v9's `nextjs` registered them as `jsx-a11y/*`, so a config line naming one now fails with
+  `Could not find plugin "jsx-a11y"`, and an `eslint-disable` comment naming one reports
+  `Definition for rule … was not found`. Renaming the prefix is all it takes; this finds every mention:
+
+  ```sh
+  $ grep -rn 'jsx-a11y/' --exclude-dir=node_modules --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' --include='*.mjs' .
+  ```
+
+- **`settings.react.version` is no longer set**, since nothing reads it any more.
 
 ## Upgrading from v8
 
@@ -159,6 +194,41 @@ observer rules), React 19 deprecations (`no-forward-ref`, `no-context-provider`,
 Rule ids also changed, so existing suppressions stop working — silently, since an `eslint-disable`
 naming an unknown rule is simply inert. Anything mentioning `react/*`, `react-hooks/*` or `import/*`
 needs rewriting to `@eslint-react/*`, `import-x/*` or `@smartive-eslint/*`.
+
+## Accessibility rules
+
+The `react` and `nextjs` rule sets use
+[`eslint-plugin-jsx-a11y-x`](https://github.com/es-tooling/eslint-plugin-jsx-a11y-x)'s recommended
+preset, with every rule at `error`. Its rules are named `jsx-a11y-x/…`, after the plugin. On top of it, two rules the preset leaves out are switched on:
+
+| Rule                                     | Level   | Flags                                                   |
+| ---------------------------------------- | ------- | ------------------------------------------------------- |
+| `jsx-a11y-x/lang`                        | `error` | an invalid `lang` on `<html>`, such as `lang="english"` |
+| `jsx-a11y-x/no-aria-hidden-on-focusable` | `warn`  | `aria-hidden` on something the keyboard can still focus |
+
+and these are switched off:
+
+| Rule                                                | Why                                                                                                            |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `jsx-a11y-x/anchor-is-valid`                        | `<a onClick>` and `href="#"` are common in existing code, and each fix is a restyle                            |
+| `jsx-a11y-x/no-static-element-interactions`         | a click-to-close modal backdrop is legitimate                                                                  |
+| `jsx-a11y-x/click-events-have-key-events`           | flags the same code as the rule above                                                                          |
+| `jsx-a11y-x/no-noninteractive-element-interactions` | the same problem on `<li>`, `<h2>` and friends                                                                 |
+| `jsx-a11y-x/no-noninteractive-tabindex`             | scrollable containers need `tabIndex={0}` for keyboard scrolling                                               |
+| `jsx-a11y-x/media-has-caption`                      | cannot see captions a video player adds                                                                        |
+| `jsx-a11y-x/label-has-associated-control`           | only recognises native controls, so `<label>Name <TextField /></label>` is reported                            |
+| `jsx-a11y-x/no-autofocus`                           | focusing the first field of a dialog is correct                                                                |
+| `jsx-a11y-x/img-redundant-alt`                      | judges wording: `alt="Photo booth at the party"` is reported for containing "photo"                            |
+| `jsx-a11y-x/iframe-has-title`                       | iframes are mostly third-party embeds, rare enough to catch in review                                          |
+| `jsx-a11y-x/no-distracting-elements`                | `<marquee>` and `<blink>` do not appear in modern React code                                                   |
+| `jsx-a11y-x/mouse-events-have-key-events`           | also fires when hovering reveals nothing essential, e.g. analytics or prefetching                              |
+| `jsx-a11y-x/prefer-tag-over-role`                   | suggests from a lookup table, so `<svg role="img">` and `<div role="presentation">` are told to become `<img>` |
+
+`control-has-associated-label` and `anchor-ambiguous-text` are off in the preset already. In `nextjs`, `alt-text` also checks `next/image`'s `<Image>`.
+
+`jsx-a11y-x/no-redundant-roles` stays on, but allows `role="list"` on `<ul>` and `<ol>`: Safari drops the
+list semantics of a list styled `list-style: none` (Tailwind's `list-none`, for instance), and
+`role="list"` is the standard way to restore them.
 
 ## Stylistic JSX rules
 
