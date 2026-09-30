@@ -203,11 +203,12 @@ const runA11yCases = (type: ConfigType): void => {
   // a sample of the rest of the recommended preset, plus the two rules added on top of it
   expectSeverityOn(type, 'a11y.tsx', 11, 'error', 'flags a role that does not exist');
   expectSeverityOn(type, 'a11y.tsx', 12, 'error', 'flags a link without content');
-  expectSeverityOn(type, 'a11y.tsx', 13, 'error', 'flags aria-hidden on a focusable element');
+  expectSeverityOn(type, 'a11y.tsx', 13, 'warn', 'flags aria-hidden on a focusable element');
   expectSeverityOn(type, 'a11y.tsx', 16, 'error', 'flags an <object> without alternative text');
   expectSeverityOn(type, 'a11y.tsx', 17, 'error', 'flags an invalid lang value');
   // `role="list"` is exempt, but only on lists
   expectSeverityOn(type, 'a11y.tsx', 18, 'error', 'flags a redundant role');
+  expectSeverityOn(type, 'a11y.tsx', 21, 'warn', 'flags a role that has a native element');
 
   it('does not judge the wording of alt text', async () => {
     const messages = await lint(type, 'img-alt-wording.tsx');
