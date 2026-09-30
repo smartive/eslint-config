@@ -1,9 +1,9 @@
 import { ESLint, type Linter } from 'eslint';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { config } from '../dist/index.js';
+import { config, type ConfigType } from '../dist/index.js';
 
-export type ConfigType = Parameters<typeof config>[0];
+export type { ConfigType };
 
 export const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 
@@ -51,3 +51,7 @@ export const describeMessages = (messages: Linter.LintMessage[]): string =>
   messages
     .map((message) => `  ${message.line}:${message.column} [${message.ruleId ?? 'fatal'}] ${message.message}`)
     .join('\n');
+
+/** Whether the rule set ignores a path, relative to the fixtures. The file need not exist. */
+export const isIgnored = (type: ConfigType, path: string): Promise<boolean> =>
+  linterFor(type).isPathIgnored(join(FIXTURES, path));
