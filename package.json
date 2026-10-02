@@ -54,7 +54,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
-    "@next/eslint-plugin-next": "16.3.6",
+    "@next/eslint-plugin-next": "16.3.7",
     "@smartive/prettier-config": "3.1.2",
     "@types/node": "25.9.8",
     "@types/react": "19.3.0",
@@ -62,7 +62,7 @@
     "cz-conventional-changelog": "3.3.0",
     "eslint": "10.11.0",
     "husky": "9.1.7",
-    "next": "16.3.6",
+    "next": "16.3.7",
     "prettier": "3.9.9",
     "react": "19.3.0",
     "react-dom": "19.3.0",
