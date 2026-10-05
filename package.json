@@ -56,7 +56,7 @@
     "@commitlint/config-conventional": "21.2.3",
     "@next/eslint-plugin-next": "16.3.8",
     "@smartive/prettier-config": "3.1.2",
-    "@types/node": "25.9.8",
+    "@types/node": "25.9.9",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "cz-conventional-changelog": "3.3.0",
