@@ -27,7 +27,7 @@ jobs:
       - run: npm clean-install
       - run: npm run build
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@7261f53f41d97434955b6ca5e26a2b0805f0cba2 # v7.0.0
         with:
           semantic_version: 25
           extra_plugins: |
