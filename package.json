@@ -64,8 +64,8 @@
     "husky": "9.1.7",
     "next": "16.4.1",
     "prettier": "3.9.10",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "typescript": "6.0.3"
   },
   "engines": {
